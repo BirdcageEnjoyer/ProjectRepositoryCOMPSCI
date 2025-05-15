@@ -30,7 +30,7 @@ levelBeginningY = 250
 
 allSpritesList = pygame.sprite.Group()
 
-player = classes.Character(50 , 50, levelBeginningX, levelBeginningY, 3)
+player = classes.Character(50 , 50, levelBeginningX, levelBeginningY, 1)
 allSpritesList.add(player)
 
 
