@@ -15,7 +15,7 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 SKY = (149, 186, 245)
 movingUp = False
-movingDown = False
+movingDown = False  
 movingLeft = False
 movingRight = False
 isTouchingGround = True #when player first spawns in, always set to true to begin with, the player wont start falling from the air
@@ -30,7 +30,7 @@ levelBeginningY = 250
 
 allSpritesList = pygame.sprite.Group()
 
-player = classes.Character(50 , 50, levelBeginningX, levelBeginningY, 1)
+player = classes.Character(50 , 50, levelBeginningX, levelBeginningY, 3)
 allSpritesList.add(player)
 
 
