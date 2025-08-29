@@ -14,10 +14,7 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 SKY = (149, 186, 245)
-movingUp = False
-movingDown = False  
-movingLeft = False
-movingRight = False
+
 isTouchingGround = True #when player first spawns in, always set to true to begin with, the player wont start falling from the air
 
 
@@ -35,6 +32,15 @@ allSpritesList.add(player)
 
 
 level1PlatformList = level1.level1platforms
+
+
+
+
+
+
+
+
+
 
 
 #initialise pygame
@@ -59,23 +65,24 @@ while not done:
             if event.key == pygame.K_SPACE:
                 player.jumpControl()
             if event.key == pygame.K_a:
-                movingLeft = True
+                player.movingLeft = True
             if event.key == pygame.K_d:
-                movingRight = True
+                player.movingRight = True
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
-                movingLeft = False
+               player.movingLeft = False
             if event.key == pygame.K_d:
-                movingRight = False
-    player.addGravity()
-    player.centreY += player.velY
+                player.movingRight = False
+    
+    
 
 
-
-    if movingLeft == True:
+    if player.movingLeft == True:
+  
         if player.centreX > 10:
             player.centreX -= 5
-    if movingRight == True:
+    if player.movingRight == True:
+
         if player.centreX < 1190:
             player.centreX += 5
   
@@ -83,6 +90,17 @@ while not done:
 
     if player.centreY > 800:
         player.centreY = 800
+
+    player.centreY += player.velY
+    player.update()
+
+
+
+
+
+
+    
+
 
 
 

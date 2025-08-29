@@ -25,6 +25,8 @@ class Character(pygame.sprite.Sprite):
         self.gravity = 0
         self.isTouchingGround = True #by default starts as true because player will be spawning on a block
         #self. multipliers, difficulty etc later on
+        self.movingLeft = False
+        self.movingRight = False
     
     def addGravity(self):
         self.gravity += 1
@@ -36,14 +38,38 @@ class Character(pygame.sprite.Sprite):
             # self.isTouchingGround = False    # uncomment when collisions are added
             
     def update(self):
+
+        
+        collisionBetweenBlockList = pygame.sprite.spritecollide(self, level1.level1platforms, False)
+            
+        # elif self.level == 2:
+        #     collisionBetweenBlockList = pygame.sprite.spritecollide(self, level2.level2platforms, False)
+
+
+        for platform in collisionBetweenBlockList:
+            if self.rect.colliderect(platform.rect):
+                if self.movingLeft == True:
+                    self.rect.right = platform.rect.left
+                elif self.movingRight == True:
+                    self.rect.left = platform.rect.right
+
+
+
+
+
+
         self.addGravity()
         self.rect.y += self.velY
 
-        collisionBetweenBlockList = pygame.sprite.spritecollide(self, level1.level1platforms, False)
-        for platform in collisionBetweenBlockList:
-            if self.velY > 0:
-                self.rect.bottom = platform.rect.top
-                self.velY
+    
+
+
+    def detectCollision(self):
+        collisionsList = pygame.sprite.spritecollide(self, level1.level1platforms, False)
+        
+
+
+
     
     def incrementLevel(self):
         self.level += 1
