@@ -19,19 +19,20 @@ startPositionY = 600
 
 
 
-platform1 = classes.PlatformBlock(0, 600, 500, 300, colours.GREEN)
+# platform1 = classes.PlatformBlock(0, 600, 500, 300, colours.GREEN)
 platform2 = classes.PlatformBlock(600, 600, 600, 300, colours.GREEN)
 platform3 = classes.PlatformBlock(500, 850, 100, 50, colours.BLACK)
 platform4 = classes.PlatformBlock(1120, 400, 50, 150, colours.YELLOW)
+# movingPlatform1 = classes.MovingPlatformBlock(250, 250, 100, 100, 900, 500, 100, 50, colours.PURPLE, 5, 5)
 
 
 
 level1platforms = pygame.sprite.Group()
-level1platforms.add(platform1)
-# level1platforms.add(platform2)
-# level1platforms.add(platform3)
-# level1platforms.add(platform4)
-
+# level1platforms.add(platform1)
+level1platforms.add(platform2)
+level1platforms.add(platform3)
+level1platforms.add(platform4)
+# level1platforms.add(movingPlatform1)
 
 
 
@@ -42,8 +43,9 @@ def drawLevel(givenScreen): #rectangles 3rd parameter follow x, y, xlength, ylen
     # pygame.draw.rect(givenScreen, damageBlockColour, [500, 850, 100, 50]) #LavaBlock1
     # pygame.draw.rect(givenScreen, endBlockColour, [1120, 400, 50, 150])
     
-    platform1.drawPlatform(givenScreen)
-    # platform2.drawPlatform(givenScreen)
-    # platform3.drawPlatform(givenScreen)
-    # platform4.drawPlatform(givenScreen)
+    # platform1.drawPlatform(givenScreen)
+    platform2.drawPlatform(givenScreen)
+    platform3.drawPlatform(givenScreen)
+    platform4.drawPlatform(givenScreen)
+    
     

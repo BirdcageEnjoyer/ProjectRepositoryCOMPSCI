@@ -18,6 +18,13 @@ SKY = (149, 186, 245)
 isTouchingGround = True #when player first spawns in, always set to true to begin with, the player wont start falling from the air
 
 
+
+
+
+
+
+
+
 setOfMovements = {pygame.K_w: "movingUp", pygame.K_s: "movingDown", pygame.K_a: "movingLeft", pygame.K_d: "movingRight"}
     # use later for movements instead of if statements
 
@@ -27,7 +34,7 @@ levelBeginningY = 250
 
 allSpritesList = pygame.sprite.Group()
 
-player = classes.Character(50 , 50, levelBeginningX, levelBeginningY, 3)
+player = classes.Character(50 , 50, levelBeginningX, levelBeginningY, 1)
 allSpritesList.add(player)
 
 
@@ -74,32 +81,27 @@ while not done:
             if event.key == pygame.K_d:
                 player.movingRight = False
     
-    
+   
 
-
-    if player.movingLeft == True:
+    # if player.movingLeft == True:
   
-        if player.centreX > 10:
-            player.centreX -= 5
-    if player.movingRight == True:
+    #     if player.centreX > 10:
+    #         player.centreX -= 5
+    # if player.movingRight == True:
 
-        if player.centreX < 1190:
-            player.centreX += 5
+    #     if player.centreX < 1190:
+    #         player.centreX += 5
   
     
+    # player.centreY += player.velY
+    # if player.centreY > 800:
+    #     player.centreY = 800
 
-    if player.centreY > 800:
-        player.centreY = 800
-
-    player.centreY += player.velY
+    
     player.update()
 
 
-
-
-
-
-    
+       
 
 
 
@@ -109,8 +111,8 @@ while not done:
     #drawing code below
 
 
-    player.drawPlayer(screen)
-
+    # player.drawPlayer(screen)
+    player.update()
 
 
     
@@ -128,7 +130,7 @@ while not done:
         #levelBeginningX = level3.startPositionX
         #levelBeginningY = level3.startPositionY
     
- 
+    
     pygame.display.flip()
  
     clock.tick(60)
