@@ -19,7 +19,7 @@ startPositionY = 600
 
 
 
-# platform1 = classes.PlatformBlock(0, 600, 500, 300, colours.GREEN)
+platform1 = classes.PlatformBlock(0, 600, 500, 300, colours.GREEN)
 platform2 = classes.PlatformBlock(600, 600, 600, 300, colours.GREEN)
 platform3 = classes.PlatformBlock(500, 850, 100, 50, colours.BLACK)
 platform4 = classes.PlatformBlock(1120, 400, 50, 150, colours.YELLOW)
@@ -28,7 +28,9 @@ platform4 = classes.PlatformBlock(1120, 400, 50, 150, colours.YELLOW)
 
 
 level1platforms = pygame.sprite.Group()
-# level1platforms.add(platform1)
+
+
+level1platforms.add(platform1)
 level1platforms.add(platform2)
 level1platforms.add(platform3)
 level1platforms.add(platform4)
@@ -37,15 +39,10 @@ level1platforms.add(platform4)
 
 
 
-def drawLevel(givenScreen): #rectangles 3rd parameter follow x, y, xlength, ylength, also draws from the position given, towards the right, and down
-    # pygame.draw.rect(givenScreen, platformColour, [0, 600, 500, 300]) #Platform1
-    # pygame.draw.rect(givenScreen, platformColour, [600, 600, 600, 300]) #Platform2
-    # pygame.draw.rect(givenScreen, damageBlockColour, [500, 850, 100, 50]) #LavaBlock1
-    # pygame.draw.rect(givenScreen, endBlockColour, [1120, 400, 50, 150])
-    
-    # platform1.drawPlatform(givenScreen)
-    platform2.drawPlatform(givenScreen)
-    platform3.drawPlatform(givenScreen)
-    platform4.drawPlatform(givenScreen)
-    
-    
+def drawLevel(givenScreen, offsetX, offsetY): #rectangles 3rd parameter follow x, y, xlength, ylength, also draw from the position given, towards the right, and down
+
+    givenScreen.blit(platform2.blockImage, (platform2.rect.x - offsetX, platform2.rect.y - offsetY))
+    givenScreen.blit(platform1.blockImage, (platform1.rect.x - offsetX, platform1.rect.y - offsetY))
+    givenScreen.blit(platform3.blockImage, (platform3.rect.x - offsetX, platform3.rect.y - offsetY))
+
+# fix world scroll

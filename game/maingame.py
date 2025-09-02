@@ -18,7 +18,7 @@ SKY = (149, 186, 245)
 isTouchingGround = True #when player first spawns in, always set to true to begin with, the player wont start falling from the air
 
 
-
+scrollThreshold = 0
 
 
 
@@ -40,8 +40,7 @@ allSpritesList.add(player)
 
 level1PlatformList = level1.level1platforms
 
-
-
+isInMenuState = False
 
 
 
@@ -53,16 +52,19 @@ level1PlatformList = level1.level1platforms
 #initialise pygame
 pygame.init()
 #screen dimensions and setup
-size = (1200, 900)
+size = (1400, 1000)
 screen = pygame.display.set_mode(size)
 
-pygame.display.set_caption("you dont wanna see me infuriated")
+pygame.display.set_caption("maingameplace")
 
 done = False
 
 clock = pygame.time.Clock()
  
 while not done:
+
+
+    screen.fill(colours.BLACK)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -73,32 +75,35 @@ while not done:
                 player.jumpControl()
             if event.key == pygame.K_a:
                 player.movingLeft = True
+                player.velX = -5
             if event.key == pygame.K_d:
                 player.movingRight = True
+                player.velX = 5
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                player.movingLeft = False
+               player.velX = 0
             if event.key == pygame.K_d:
                 player.movingRight = False
+                player.velX = 0
     
    
 
-    # if player.movingLeft == True:
-  
-    #     if player.centreX > 10:
-    #         player.centreX -= 5
-    # if player.movingRight == True:
-
-    #     if player.centreX < 1190:
-    #         player.centreX += 5
-  
-    
-    # player.centreY += player.velY
-    # if player.centreY > 800:
-    #     player.centreY = 800
 
     
-    player.update()
+    # player.update()
+
+    if player.level == 1:
+        player.update(level1PlatformList)
+    # if player.level == 2:
+    #     player.update()
+    # if player.level == 3:
+    #     player.update()
+    cameraXoffset = 0
+    cameraYoffset = 0
+
+    cameraXoffset = player.rect.centerx - 700
+    cameraYoffset = player.rect.centery - 500  
 
 
        
@@ -111,16 +116,17 @@ while not done:
     #drawing code below
 
 
-    # player.drawPlayer(screen)
-    player.update()
 
 
+    # level1PlatformList.draw(screen)
+    screen.blit(player.playerImage, player.rect)
+   
     
     if player.level == 1:
         
-        level1.drawLevel(screen)
-        levelBeginningX = level1.startPositionX
-        levelBeginningY = level1.startPositionY
+        level1.drawLevel(screen, cameraXoffset, cameraYoffset)
+        # levelBeginningX = level1.startPositionX
+        # levelBeginningY = level1.startPositionY
     if player.level == 2:
         level2.drawLevel(screen, GREEN, RED, YELLOW, BLACK) # parameters for these 2 levels for now are just placeholders. EDIT, OUTDATED
         #levelBeginningX = level2.startPositionX
@@ -136,3 +142,91 @@ while not done:
     clock.tick(60)
  
 pygame.quit()
+
+
+
+
+
+def menu():
+    while not done:
+        screen.fill(colours.BLACK)
+        screen.blit() # blit settings gui
+
+
+
+
+def settings():
+    while not done:
+        screen.fill(colours.BLACK)
+        screen.blit()#blit setting gui
+
+
+
+
+
+def playGame():
+    while not done:
+
+
+        if isInMenuState == True:
+            pass
+
+
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            if event.type == pygame.KEYDOWN: # later on, make variables for the keys so that the player can change the keys for movement, then replace k_...
+                #with the variables so that depending on which key the player sets to as move up left right down, it will move accordingly ...
+                if event.key == pygame.K_SPACE:
+                    player.jumpControl()
+                if event.key == pygame.K_a:
+                    player.movingLeft = True
+                    player.velX = -5
+                if event.key == pygame.K_d:
+                    player.movingRight = True
+                    player.velX = 5
+                if event.key == pygame.K_ESCAPE:
+                    isInMenuState = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a:
+                    player.movingLeft = False
+                    player.velX = 0
+                if event.key == pygame.K_d:
+                    player.movingRight = False
+                    player.velX = 0
+        
+        
+        player.update()
+
+
+        screen.fill(SKY)
+        #drawing code below
+
+        #!!!cant draw a group of sprites for some reason
+
+
+        screen.blit(player.playerImage, player.rect)
+    
+        
+        if player.level == 1:
+            
+            level1.drawLevel(screen)
+            # levelBeginningX = level1.startPositionX
+            # levelBeginningY = level1.startPositionY
+        if player.level == 2:
+            level2.drawLevel(screen, GREEN, RED, YELLOW, BLACK) # parameters for these 2 levels for now are just placeholders. EDIT, OUTDATED
+            #levelBeginningX = level2.startPositionX
+            #levelBeginningY = level2.startPositionY
+        if player.level == 3:
+            level3.drawLevel(screen, GREEN, RED)
+            #levelBeginningX = level3.startPositionX
+            #levelBeginningY = level3.startPositionY
+        
+        
+        pygame.display.flip()
+    
+        clock.tick(60)
+    
+    pygame.quit()
