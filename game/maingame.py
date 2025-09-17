@@ -5,6 +5,7 @@ import level2
 import level3
 import colours
 import classes
+import camera
 #w
 #W
 #variables defined here
@@ -34,7 +35,7 @@ levelBeginningY = 250
 
 allSpritesList = pygame.sprite.Group()
 
-player = classes.Character(50 , 50, levelBeginningX, levelBeginningY, 1)
+player = classes.Character(700 , 500, levelBeginningX, levelBeginningY, 1) #50, 50
 allSpritesList.add(player)
 
 
@@ -52,17 +53,20 @@ isInMenuState = False
 #initialise pygame
 pygame.init()
 #screen dimensions and setup
+
 size = (1400, 1000)
 screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("maingameplace")
 
+# screen = camera.makeScreen(1400, 1000, "maingameplace")
 done = False
 
 clock = pygame.time.Clock()
  
 while not done:
 
+ 
 
     screen.fill(colours.BLACK)
 
@@ -90,8 +94,8 @@ while not done:
    
 
 
+
     
-    # player.update()
 
     if player.level == 1:
         player.update(level1PlatformList)
@@ -99,16 +103,15 @@ while not done:
     #     player.update()
     # if player.level == 3:
     #     player.update()
-    cameraXoffset = 0
-    cameraYoffset = 0
 
-    cameraXoffset = player.rect.centerx - 700
-    cameraYoffset = player.rect.centery - 500  
+
+    cameraXoffset = (player.rect.centerx - 700)
+    cameraYoffset = (player.rect.centery - 500)
 
 
        
 
-
+    
 
 
 
@@ -119,7 +122,7 @@ while not done:
 
 
     # level1PlatformList.draw(screen)
-    screen.blit(player.playerImage, player.rect)
+    screen.blit(player.playerImage, (player.rect.x - cameraXoffset, player.rect.y - cameraYoffset))
    
     
     if player.level == 1:

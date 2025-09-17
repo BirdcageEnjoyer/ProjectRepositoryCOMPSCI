@@ -12,7 +12,7 @@ class Character(pygame.sprite.Sprite):
         super().__init__()
         self.playerImage = pygame.Surface((100, 50))
         self.playerImage.fill(colours.RED)
-        self.rect = self.playerImage.get_rect(topleft=(50, 50))
+        self.rect = self.playerImage.get_rect(topleft=(700, 500)) #50 50
         # self.centreX = centreXval
         # self.centreY = centreYval
         self.level = currentLevel
@@ -63,12 +63,15 @@ class Character(pygame.sprite.Sprite):
 
 
         self.addGravity() #applies gravity before updating vertical velocity
+        if self.velY > 20: 
+            self.velY = 20
         self.rect.y += self.velY
 
         collisionList = pygame.sprite.spritecollide(self, platformList, False) #refreshes collisionList as it is now stale, if we used the
         #collisionList from before, the variable is detecting collision from the previous position, after self.rect.x has been updated via self.velx
         #
 
+        self.isTouchingGround = False
         
         for block in collisionList:
             
@@ -76,11 +79,15 @@ class Character(pygame.sprite.Sprite):
                 if self.velY > 0:
                     self.rect.bottom = block.rect.top
                     self.velY = 0
+                    self.isTouchingGround = True
                 elif self.velY < 0:
                     self.rect.top = block.rect.bottom
                     self.velY = 0
         # since gravity is being added every iteration of update(), i have to reset vertical velocity so that the player doesn't fall through from the
         # top, or go into the platform from below
+
+        if self.isTouchingGround == True:
+            self.velY = 0
 
         if self.health <= 0:
             self.lives -= 1
@@ -114,7 +121,7 @@ class PlatformBlock(pygame.sprite.Sprite):
     def __init__(self, xPos, yPos, length, height, colour):
         super().__init__()
         self.blockImage = pygame.Surface((length, height))
-        self.blockImage.fill(colours.GREEN)
+        self.blockImage.fill(colour)
         self.rect = self.blockImage.get_rect(topleft=(xPos, yPos))
         self.xPosition = xPos
         self.yPosition = yPos
@@ -131,7 +138,7 @@ class PlatformBlock(pygame.sprite.Sprite):
 
 class MovingPlatformBlock(pygame.sprite.Sprite):
     def __init__(self, X, Y, lowerboundx,lowerboundy, upperboundx, upperboundy, length, height, colour, velX, velY):
-        super.__init__()
+        super().__init__()
         self.X = X
         self.Y = Y
         self.lowerx = lowerboundx
@@ -148,14 +155,15 @@ class MovingPlatformBlock(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(X,Y))
     
     def move(self):
-        if self.X <= self.lowerx:
-            self.X += self.velX
-        if self.X >= self.upperx:
-            self.X -= self.velX
-        if self.Y <= self.lowery:
-            self.Y += self.velY
-        if self.Y >= self.uppery:
-            self.Y -= self.velY
+        if self.rect.x <= self.lowerx:
+            self.rect.x += self.velX
+        if self.rect.x >= self.upperx:
+            self.rect.x -= self.velX
+        if self.rect.y <= self.lowery:
+            self.rect.y += self.velY
+        if self.rect.y >= self.uppery:
+            self.rect.y -= self.velY
+
         
 
 class MenuButton(pygame.sprite.Sprite):
