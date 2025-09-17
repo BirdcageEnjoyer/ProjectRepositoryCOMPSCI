@@ -21,7 +21,12 @@ RED = (255, 0, 0)
 
 #initialise pygame
 pygame.init()
- 
+
+
+
+
+#111111111111111111111111111111111111111111111111111111111111111111111
+background = pygame.Surface((0,0))
 
 #screen dimensions and setup
 size = (1200, 900)
@@ -37,6 +42,8 @@ clock = pygame.time.Clock()
  
 while not done:
 
+    screen.blit(background, (0,0))
+     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True

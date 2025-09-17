@@ -21,6 +21,7 @@ isTouchingGround = True #when player first spawns in, always set to true to begi
 
 scrollThreshold = 0
 
+# backgroundMenuImage = pygame.image.
 
 
 
@@ -150,6 +151,24 @@ pygame.quit()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def menu():
     while not done:
         screen.fill(colours.BLACK)
@@ -171,65 +190,5 @@ def playGame():
     while not done:
 
 
-        if isInMenuState == True:
-            pass
-
-
-
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-            if event.type == pygame.KEYDOWN: # later on, make variables for the keys so that the player can change the keys for movement, then replace k_...
-                #with the variables so that depending on which key the player sets to as move up left right down, it will move accordingly ...
-                if event.key == pygame.K_SPACE:
-                    player.jumpControl()
-                if event.key == pygame.K_a:
-                    player.movingLeft = True
-                    player.velX = -5
-                if event.key == pygame.K_d:
-                    player.movingRight = True
-                    player.velX = 5
-                if event.key == pygame.K_ESCAPE:
-                    isInMenuState = True
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a:
-                    player.movingLeft = False
-                    player.velX = 0
-                if event.key == pygame.K_d:
-                    player.movingRight = False
-                    player.velX = 0
-        
-        
-        player.update()
-
-
-        screen.fill(SKY)
-        #drawing code below
-
-        #!!!cant draw a group of sprites for some reason
-
-
-        screen.blit(player.playerImage, player.rect)
-    
-        
-        if player.level == 1:
-            
-            level1.drawLevel(screen)
-            # levelBeginningX = level1.startPositionX
-            # levelBeginningY = level1.startPositionY
-        if player.level == 2:
-            level2.drawLevel(screen, GREEN, RED, YELLOW, BLACK) # parameters for these 2 levels for now are just placeholders. EDIT, OUTDATED
-            #levelBeginningX = level2.startPositionX
-            #levelBeginningY = level2.startPositionY
-        if player.level == 3:
-            level3.drawLevel(screen, GREEN, RED)
-            #levelBeginningX = level3.startPositionX
-            #levelBeginningY = level3.startPositionY
-        
-        
-        pygame.display.flip()
-    
-        clock.tick(60)
-    
+        pass
     pygame.quit()

@@ -205,15 +205,4 @@ class KillBlock(pygame.sprite.Sprite):
 
 
 
-class Camera(pygame.sprite.Sprite):
-    def __init__(self, game, length, height):
-        super().__init__()
-        self.game = game
-        self.length = length
-        self.height = height
-        self.camera = pygame.Rect(0, 0, length, height)
 
-    def updateCamera(self, player):
-        xPos = int((self.game.length)/2) - player.rect.centreX
-        yPos = int((self.game.height)/2) - player.rect.bottom
-        self.camera = pygame.Rect(xPos, yPos, self.length, self.height)
