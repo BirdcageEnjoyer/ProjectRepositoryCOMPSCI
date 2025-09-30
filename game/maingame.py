@@ -5,7 +5,7 @@ import level2
 import level3
 import colours
 import classes
-import camera
+
 #w
 #W
 #variables defined here
@@ -58,9 +58,8 @@ pygame.init()
 size = (1400, 1000)
 screen = pygame.display.set_mode(size)
 
-pygame.display.set_caption("maingameplace")
+pygame.display.set_caption("you don't want to see me infuriated")
 
-# screen = camera.makeScreen(1400, 1000, "maingameplace")
 done = False
 
 clock = pygame.time.Clock()
@@ -187,8 +186,81 @@ def settings():
 
 
 def playGame():
-    while not done:
 
 
-        pass
-    pygame.quit()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                player.jumpControl()
+            if event.key == pygame.K_a:
+                player.movingLeft = True
+                player.velX = -5
+            if event.key == pygame.K_d:
+                player.movingRight = True
+                player.velX = 5
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_a:
+               player.movingLeft = False
+               player.velX = 0
+            if event.key == pygame.K_d:
+                player.movingRight = False
+                player.velX = 0
+    
+   
+
+
+
+    
+
+    if player.level == 1:
+        player.update(level1PlatformList)
+    # if player.level == 2:
+    #     player.update()
+    # if player.level == 3:
+    #     player.update()
+
+
+    cameraXoffset = (player.rect.centerx - 700)
+    cameraYoffset = (player.rect.centery - 500)
+
+
+       
+
+    
+
+
+
+    screen.fill(SKY)
+    #drawing code below
+
+
+
+
+    # level1PlatformList.draw(screen)
+    screen.blit(player.playerImage, (player.rect.x - cameraXoffset, player.rect.y - cameraYoffset))
+   
+    
+    if player.level == 1:
+        
+        level1.drawLevel(screen, cameraXoffset, cameraYoffset)
+        # levelBeginningX = level1.startPositionX
+        # levelBeginningY = level1.startPositionY
+    if player.level == 2:
+        level2.drawLevel(screen, GREEN, RED, YELLOW, BLACK)
+        #levelBeginningX = level2.startPositionX
+        #levelBeginningY = level2.startPositionY
+    if player.level == 3:
+        level3.drawLevel(screen, GREEN, RED)
+        #levelBeginningX = level3.startPositionX
+        #levelBeginningY = level3.startPositionY
+    
+    
+    pygame.display.flip()
+ 
+    clock.tick(60)
+ 
+pygame.quit()
+
+

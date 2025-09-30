@@ -35,7 +35,7 @@ class Character(pygame.sprite.Sprite):
 
     def jumpControl(self):
         if self.isTouchingGround == True:
-            self.gravity = -21 #make it so that when jumping, once you collide and are on something, then you can jump again, put if statement here
+            self.gravity = -22.3 #make it so that when jumping, once you collide and are on something, then you can jump again, put if statement here
             # self.isTouchingGround = False    # uncomment when collisions are added
             
     def update(self, platformList):
