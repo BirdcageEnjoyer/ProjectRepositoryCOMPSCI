@@ -165,7 +165,7 @@ pygame.quit()
 
 
 
-
+#game states
 
 
 def menu():
@@ -253,7 +253,7 @@ def playGame():
         #levelBeginningY = level2.startPositionY
     if player.level == 3:
         level3.drawLevel(screen, GREEN, RED)
-        #levelBeginningX = level3.startPositionX
+        #levelBeginningX = level3.st artPositionX
         #levelBeginningY = level3.startPositionY
     
     
