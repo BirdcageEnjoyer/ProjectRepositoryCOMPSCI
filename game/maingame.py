@@ -118,7 +118,7 @@ while not done:
     screen.fill(SKY)
     #drawing code below
 
-
+    
 
 
     # level1PlatformList.draw(screen)
@@ -165,7 +165,7 @@ pygame.quit()
 
 
 
-#game states
+#game states    
 
 
 def menu():
