@@ -5,6 +5,7 @@ import level2
 import level3
 import colours
 import classes
+import math
 
 #w
 #W
@@ -24,6 +25,11 @@ scrollThreshold = 0
 # backgroundMenuImage = pygame.image.
 
 
+bglevel1 = pygame.image.load("Backgroundtest.png").convert()
+bglevel2 = pygame.image.load("").convert()
+bglevel3 = pygame.image.load("").convert()
+bgwidth = bglevel1.get_width()
+bgrect = bglevel1.get_rect()
 
 
 
@@ -45,7 +51,8 @@ level1PlatformList = level1.level1platforms
 isInMenuState = False
 
 
-
+backgroundupdate = math.ceil(1400/bgwidth) + 1
+bgscroll = 0
 
 
 
@@ -138,7 +145,18 @@ while not done:
         level3.drawLevel(screen, GREEN, RED)
         #levelBeginningX = level3.startPositionX
         #levelBeginningY = level3.startPositionY
+
     
+
+    for i in range(backgroundupdate):
+        if player.level == 1:
+            screen.blit(bglevel1, (i * bgwidth + bgscroll, 0))
+            bgrect.x = i * bgwidth + bgscroll
+            pygame.draw.rect(screen, (255, 0, 0), bgrect, 1)
+    
+    bgscroll -= 5
+    if abs(bgscroll) > bgwidth:
+        bgscroll = 0
     
     pygame.display.flip()
  
