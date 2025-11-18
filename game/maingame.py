@@ -1,5 +1,11 @@
-#all modules
 import pygame
+
+pygame.init()
+
+size = (1400, 1000)
+screen = pygame.display.set_mode(size)
+#all modules
+# import pygame
 import level1
 import level2
 import level3
@@ -25,11 +31,11 @@ scrollThreshold = 0
 # backgroundMenuImage = pygame.image.
 
 
-bglevel1 = pygame.image.load("Backgroundtest.png").convert()
-bglevel2 = pygame.image.load("").convert()
-bglevel3 = pygame.image.load("").convert()
-bgwidth = bglevel1.get_width()
-bgrect = bglevel1.get_rect()
+# bglevel1 = pygame.image.load("Backgroundtest.png").convert_alpha()
+# bglevel2 = pygame.image.load("").convert()
+# bglevel3 = pygame.image.load("").convert()
+# bgwidth = bglevel1.get_width()
+# bgrect = bglevel1.get_rect()
 
 
 
@@ -51,19 +57,27 @@ level1PlatformList = level1.level1platforms
 isInMenuState = False
 
 
-backgroundupdate = math.ceil(1400/bgwidth) + 1
-bgscroll = 0
+# backgroundupdate = math.ceil(1400/bgwidth) + 1
+# bgscroll = 0
 
 
 
 
 
 #initialise pygame
-pygame.init()
+# pygame.init()
 #screen dimensions and setup
 
-size = (1400, 1000)
-screen = pygame.display.set_mode(size)
+# size = (1400, 1000)
+# screen = pygame.display.set_mode(size)
+
+
+bglevel1 = pygame.image.load("level1bgmountains.jpg").convert()
+bgwidth = bglevel1.get_width()
+bgrect = bglevel1.get_rect()
+
+backgroundupdate = math.ceil(1400/bgwidth) + 1
+bgscroll = 0
 
 pygame.display.set_caption("you don't want to see me infuriated")
 
@@ -125,6 +139,17 @@ while not done:
     screen.fill(SKY)
     #drawing code below
 
+    for i in range(backgroundupdate):
+        if player.level == 1:
+            screen.blit(bglevel1, (i * bgwidth + bgscroll, 0))
+            bgrect.x = i * bgwidth + bgscroll
+
+    
+    bgscroll -= 5
+    if abs(bgscroll) > bgwidth:
+        bgscroll = 0
+        
+
     
 
 
@@ -148,15 +173,15 @@ while not done:
 
     
 
-    for i in range(backgroundupdate):
-        if player.level == 1:
-            screen.blit(bglevel1, (i * bgwidth + bgscroll, 0))
-            bgrect.x = i * bgwidth + bgscroll
-            pygame.draw.rect(screen, (255, 0, 0), bgrect, 1)
+    # for i in range(backgroundupdate):
+    #     if player.level == 1:
+    #         screen.blit(bglevel1, (i * bgwidth + bgscroll, 0))
+    #         bgrect.x = i * bgwidth + bgscroll
+  
     
-    bgscroll -= 5
-    if abs(bgscroll) > bgwidth:
-        bgscroll = 0
+    # bgscroll -= 5
+    # if abs(bgscroll) > bgwidth:
+    #     bgscroll = 0
     
     pygame.display.flip()
  
@@ -277,7 +302,7 @@ def playGame():
     
     pygame.display.flip()
  
-    clock.tick(60)
+    clock.tick(15)
  
 pygame.quit()
 

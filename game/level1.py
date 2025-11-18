@@ -20,11 +20,11 @@ startPositionY = 600
 
 
 platform1 = classes.PlatformBlock(0, 600, 500, 300, colours.GREEN)
-platform2 = classes.PlatformBlock(600, 600, 600, 300, colours.GREEN)
+platform2 = classes.PlatformBlock(600, 600, 500, 300, colours.GREEN)
 platform3 = classes.PlatformBlock(500, 800, 100, 50, colours.BLACK)
 platform4 = classes.PlatformBlock(1120, 400, 50, 150, colours.YELLOW)
-platform5 = classes.PlatformBlock(1400, 600, 600, 300, colours.GREEN)
-platform6 = classes.PlatformBlock(2100, 400, 600, 400, colours.GREEN)
+platform5 = classes.PlatformBlock(1400, 600, 500, 300, colours.GREEN)
+platform6 = classes.PlatformBlock(2100, 400, 500, 300, colours.GREEN)
 movingPlatform1 = classes.MovingPlatformBlock(250, 400, 100, 100, 900, 500, 100, 50, colours.PURPLE, 5, 5)
 
 
@@ -50,8 +50,8 @@ def drawLevel(givenScreen, offsetX, offsetY): #rectangles 3rd parameter follow x
     
     givenScreen.blit(platform2.blockImage, (platform2.rect.x - offsetX, platform2.rect.y - offsetY))
     givenScreen.blit(platform1.blockImage, (platform1.rect.x - offsetX, platform1.rect.y - offsetY))
-    givenScreen.blit(platform3.blockImage, (platform3.rect.x - offsetX, platform3.rect.y - offsetY))
-    givenScreen.blit(platform4.blockImage, (platform4.rect.x - offsetX, platform4.rect.y - offsetY))
+    # givenScreen.blit(platform3.blockImage, (platform3.rect.x - offsetX, platform3.rect.y - offsetY))
+    # givenScreen.blit(platform4.blockImage, (platform4.rect.x - offsetX, platform4.rect.y - offsetY))
     givenScreen.blit(movingPlatform1.image, (movingPlatform1.rect.x - offsetX, movingPlatform1.rect.y - offsetY))
     givenScreen.blit(platform5.blockImage, (platform5.rect.x - offsetX, platform5.rect.y - offsetY))
     givenScreen.blit(platform6.blockImage, (platform6.rect.x - offsetX, platform6.rect.y - offsetY))

@@ -122,6 +122,7 @@ class PlatformBlock(pygame.sprite.Sprite):
         super().__init__()
         self.blockImage = pygame.Surface((length, height))
         self.blockImage.fill(colour)
+        # self.blockImage = pygame.image.load("platform1tile.png").convert()
         self.rect = self.blockImage.get_rect(topleft=(xPos, yPos))
         self.xPosition = xPos
         self.yPosition = yPos
@@ -192,11 +193,13 @@ class KillBlock(pygame.sprite.Sprite):
         super().__init__()
         self.x = x
         self.y = y
-        self.colour = colour
-        self.killblockImage = pygame.Surface((self.x, self.y))
-        self.killblockImage.fill(self.colour)
+        # self.colour = colour
+        # self.killblockImage = pygame.Surface((self.x, self.y))
+        self.killblockImage = pygame.image.load("").convert()
+        # self.killblockImage.fill(self.colour)
         self.rect = self.killblockImage.get_rect(topleft=(self.x, self.y))
         self.collisionList = collisionList
+                            
 
 
     def dealDamage(self, health):
