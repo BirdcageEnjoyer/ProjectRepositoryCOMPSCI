@@ -139,18 +139,33 @@ while not done:
     screen.fill(SKY)
     #drawing code below
 
+    # for i in range(backgroundupdate):
+    #     if player.level == 1:
+    #         screen.blit(bglevel1, (i * bgwidth + bgscroll, 0))
+      
+
+    if player.movingRight:
+        bgscroll += 5
+    elif player.movingLeft:
+        bgscroll -= 5  
+        # use this for implemntation, issue was bg picture constantly moving to left, but i wanted it to only move relative to player movement
+        # therefore added conditionals
+    # if abs(bgscroll) > bgwidth:
+    #     bgscroll = 0
+    bgscroll = bgscroll % bgwidth
+    # if bgscroll <= -bgwidth:
+    #     bgscroll += bgwidth
+    # elif bgscroll >= bgwidth:
+    #     bgscroll -= bgwidth
     for i in range(backgroundupdate):
         if player.level == 1:
-            screen.blit(bglevel1, (i * bgwidth + bgscroll, 0))
-            bgrect.x = i * bgwidth + bgscroll
-
-    
-    bgscroll -= 5
-    if abs(bgscroll) > bgwidth:
-        bgscroll = 0
-        
-
-    
+            # screen.blit(bglevel1, (i * bgwidth + bgscroll, 0))
+            screen.blit(bglevel1, (-(bgscroll) + bgwidth, 0))
+            screen.blit(bglevel1, (-(bgscroll), 0))
+            
+# second issue is ^ that if moving to left from spawn, picture would stop refreshing
+    #reason is because this line since i did absolute value is above bgwidth, and using > i will be only accounting for it when player moves to right
+    # i needed to make the wrap logic for going left as well.
 
 
     # level1PlatformList.draw(screen)
