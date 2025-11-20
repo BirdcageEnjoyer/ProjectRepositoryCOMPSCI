@@ -19,7 +19,7 @@ class Character(pygame.sprite.Sprite):
         self.width = width
         self.height = height
         self.health = 100
-        self.lives = 10
+        self.lives = 3
         self.velX = 0
         self.velY = 0
         self.gravity = 0
@@ -170,8 +170,6 @@ class Character(pygame.sprite.Sprite):
     # def drawPlayer(self, screen):
     #     pygame.draw.rect(screen, colours.RED, [self.centreX, self.centreY, self.width, self.height]) #DO
 
-    
-
 
 class PlatformBlock(pygame.sprite.Sprite):
     def __init__(self, xPos, yPos, length, height, colour):
@@ -190,7 +188,6 @@ class PlatformBlock(pygame.sprite.Sprite):
     # def drawPlatform(self, givenScreen):
     #     pygame.draw.rect(givenScreen, self.colour, [self.xPosition, self.yPosition, self.length, self.height])
     # unnecessary now that i have a procedure that draws each block in each level
-
 
 
 class MovingPlatformBlock(pygame.sprite.Sprite):
@@ -235,30 +232,6 @@ class MovingPlatformBlock(pygame.sprite.Sprite):
             return playerVelX - self.velX
         elif needY == True:
             pass #figure this out later
-        
-        
-
-        
-
-class MenuButton(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, textinput, font, colour, hovercolour):
-        super().__init__()
-        self.buttonImage = image
-        self.rect = self.buttonImage.get_rect(topleft=(x, y))
-        
-
-
-        self.X = x
-        self.Y = y
-        self.font = font
-        self.colour = 0
-
-    def drawButtonOntoScreen(self, givenScreen):
-        givenScreen.blit(self.buttonImage, (self.rect.x, self.rect.y))
-
-
-
-
 
 
 class KillBlock(pygame.sprite.Sprite):
@@ -279,6 +252,42 @@ class KillBlock(pygame.sprite.Sprite):
         health -= 50 
 
 
+class generalpurposeButton(pygame.sprite.Sprite):
+    def __init__(self, image, position, font, colour, collisioncolour, textinput):
+        self.image = image
+        self.position = position
+        self.x = position[0]
+        self.y = position[1]
+        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.font = font
+        self.colour = colour
+        self.collisioncolour = collisioncolour
+        self.textinput = textinput
+        self.displayedtext = self.font.render(self.textinput, True, self.colour)
+        self.textrect = self.displayedtext.get_rect(center=(self.x, self.y))
+        if self.image is not None:
+            self.image = self.displayedtext
+        
 
+    
+        self.textrect = self.displayedtext.get_rect(center=(self.x, self.y))
+
+    def update(self, givenScreen):
+        if self.image is not None:
+            givenScreen.blit(self.image, self.rect)
+        givenScreen.blit(self.displayedtext, self.textrect)
+    
+    def detectMouseInput(self, mouseposition):
+        # if mouseposition[0] in range(self.rect.left, self.rect.right) and mouseposition[1] in range(self.rect.top, self.rect.bottom):
+        #     return True
+        # else:
+        #     return False
+        return self.rect.collidepoint(mouseposition)
+        
+    def colourSwapOnHover(self, mouseposition):
+        if mouseposition[0] in range(self.rect.left, self.rect.right) and mouseposition[1] in range(self.rect.top, self.rect.bottom):
+            self.displayedtext = self.font.render(self.textinput, True, self.collisioncolour)
+        else:
+            self.displayedtext = self.font.render(self.textinput, True, self.colour)
 
 

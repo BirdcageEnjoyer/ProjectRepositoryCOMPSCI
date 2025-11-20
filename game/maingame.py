@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 pygame.init()
 
@@ -12,6 +13,101 @@ import level3
 import colours
 import classes
 import math
+
+
+
+
+def playGame():
+
+    pygame.display.set_caption("yeahyeah")
+
+    while not done:
+
+        playerMousePosition = pygame.mouse.get_pos()
+        screen.fill("black") #possibly not needed
+
+        returnButton = classes.generalpurposeButton(image=None, position=(1300, 0), textinput="Return", font=pygameGetFont(25), colour="Green", 
+        collisioncolour="Red")
+
+        returnButton.colourSwapOnHover(playerMousePosition)
+        returnButton.update(screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if returnButton.detectMouseInput(playerMousePosition):
+                    menu()
+        
+        pygame.display.update()
+        
+
+
+
+def settings():
+    while not done:
+        
+        settingsMouseButton = pygame.mouse.get_pos()
+        settingsText = pygameGetFont(50).render("skibidi", True, "Green")
+        settingsRect = settingsText.get_rect(center=(700, 200))
+        screen.blit(settingsText, settingsRect)
+
+        settingsReturnButton = classes.generalpurposeButton(image=None, position=(1300,100), textinput="Return", font=pygameGetFont(25),
+        colour="Black", collisioncolour="Red")
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if settingsReturnButton.detectMouseInput(settingsMouseButton):
+                    menu()
+        
+        pygame.display.update()
+
+
+
+
+def menu():
+
+    pygame.display.set_caption("i want to playtest this game")
+
+    while not done:
+        screen.blit(mainMenuBackground, (0,0))
+
+        mousePosition = pygame.mouse.get_pos()
+
+        menuTitleText = pygameGetFont(50).render("Main menu", True, "#964B00")
+        menuRect = menuTitleText.get_rect(center=(700, 200))
+
+        startGameButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 300), textinput="Begin", 
+        font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")
+
+        settingsButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 400), textinput="Settings",
+        font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")
+
+        closeButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 500), textinput="Close",
+        font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")
+
+
+        screen.blit(menuTitleText, menuRect)
+        for i in range(3):
+            buttons = [startGameButton, settingsButton, closeButton]
+            buttons[i].colourSwapOnHover(mousePosition)
+            buttons[i].update(screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if startGameButton.detectMouseInput(mousePosition):
+                    playGame()
+                elif settingsButton.detectMouseInput(mousePosition):
+                    pass #put settings() here once it has been made
+                elif closeButton.detectMouseInput(mousePosition):
+                    pygame.quit()
+        
+        pygame.display.update()
+        
 
 #w
 #W
@@ -30,13 +126,15 @@ scrollThreshold = 0
 
 # backgroundMenuImage = pygame.image.
 
-
+mainMenuBackground = pygame.image.load("Screenshot 2023-04-08 190551.png").convert()
 # bglevel1 = pygame.image.load("Backgroundtest.png").convert_alpha()
 # bglevel2 = pygame.image.load("").convert()
 # bglevel3 = pygame.image.load("").convert()
 # bgwidth = bglevel1.get_width()
 # bgrect = bglevel1.get_rect()
 
+def pygameGetFont(size):
+    return pygame.font.Font("CedarvilleCursive-Regular.ttf", size)
 
 
 setOfMovements = {pygame.K_w: "movingUp", pygame.K_s: "movingDown", pygame.K_a: "movingLeft", pygame.K_d: "movingRight"}
@@ -93,7 +191,7 @@ while not done:
     screen.fill(colours.BLACK)
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or player.lives <= 0:
             done = True
         if event.type == pygame.KEYDOWN: # later on, make variables for the keys so that the player can change the keys for movement, then replace k_...
             #with the variables so that depending on which key the player sets to as move up left right down, it will move accordingly ...
@@ -113,7 +211,11 @@ while not done:
                 player.movingRight = False
                 player.velX = 0
     
-   
+    if player.rect.y > 3000:
+        player.rect.x = levelBeginningX
+        player.rect.y = levelBeginningY
+        player.lives -= 1
+        print(player.lives)
 
 
 
@@ -228,99 +330,107 @@ pygame.quit()
 #game states    
 
 
-def menu():
-    while not done:
-        screen.fill(colours.BLACK)
-        screen.blit() # blit settings gui
+# def menu():
+
+#     pygame.display.set_caption("i want to playtest this game")
+
+#     while not done:
+#         screen.blit(mainMenuBackground, (0,0))
+
+#         mousePosition = pygame.mouse.get_pos()
+
+#         menuTitleText = pygameGetFont(50).render("Main menu", True, "#964B00")
+#         menuRect = menuTitleText.get_rect(center=(700, 200))
+
+#         startGameButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 300), textinput="Begin", 
+#         font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")
+
+#         settingsButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 400), textinput="Settings",
+#         font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")
+
+#         closeButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 500), textinput="Close",
+#         font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")
 
 
+#         screen.blit(menuTitleText, menuRect)
+#         for i in range(3):
+#             buttons = [startGameButton, settingsButton, closeButton]
+#             buttons[i].colourSwapOnHover(mousePosition)
+#             buttons[i].update(screen)
 
-
-def settings():
-    while not done:
-        screen.fill(colours.BLACK)
-        screen.blit()#blit setting gui
-
-
-
-
-
-def playGame():
-
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                player.jumpControl()
-            if event.key == pygame.K_a:
-                player.movingLeft = True
-                player.velX = -5
-            if event.key == pygame.K_d:
-                player.movingRight = True
-                player.velX = 5
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
-               player.movingLeft = False
-               player.velX = 0
-            if event.key == pygame.K_d:
-                player.movingRight = False
-                player.velX = 0
-    
-   
-
-
-
-    
-
-    if player.level == 1:
-        player.update(level1PlatformList)
-    # if player.level == 2:
-    #     player.update()
-    # if player.level == 3:
-    #     player.update()
-
-
-    cameraXoffset = (player.rect.centerx - 700)
-    cameraYoffset = (player.rect.centery - 500)
-
-
-       
-
-    
-
-
-
-    screen.fill(SKY)
-    #drawing code below
-
-
-
-
-    # level1PlatformList.draw(screen)
-    screen.blit(player.playerImage, (player.rect.x - cameraXoffset, player.rect.y - cameraYoffset))
-   
-    
-    if player.level == 1:
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 pygame.quit()
+#             if event.type == pygame.MOUSEBUTTONDOWN:
+#                 if startGameButton.detectMouseInput(mousePosition):
+#                     playGame()
+#                 elif settingsButton.detectMouseInput(mousePosition):
+#                     pass #put settings() here once it has been made
+#                 elif closeButton.detectMouseInput(mousePosition):
+#                     pygame.quit()
         
-        level1.drawLevel(screen, cameraXoffset, cameraYoffset)
-        # levelBeginningX = level1.startPositionX
-        # levelBeginningY = level1.startPositionY
-    if player.level == 2:
-        level2.drawLevel(screen, GREEN, RED, YELLOW, BLACK)
-        #levelBeginningX = level2.startPositionX
-        #levelBeginningY = level2.startPositionY
-    if player.level == 3:
-        level3.drawLevel(screen, GREEN, RED)
-        #levelBeginningX = level3.st artPositionX
-        #levelBeginningY = level3.startPositionY
+#         pygame.display.update()
+                    
+                    
+
+        
+        
+
+# def settings():
+#     while not done:
+        
+#         settingsMouseButton = pygame.mouse.get_pos()
+#         settingsText = pygameGetFont(50).render("skibidi", True, "Green")
+#         settingsRect = settingsText.get_rect(center=(700, 200))
+#         screen.blit(settingsText, settingsRect)
+
+#         settingsReturnButton = classes.generalpurposeButton(image=None, position=(1300,100), textinput="Return", font=pygameGetFont(25),
+#         colour="Black", collisioncolour="Red")
+
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 pygame.quit()
+#             if event.type == pygame.MOUSEBUTTONDOWN:
+#                 if settingsReturnButton.detectMouseInput(settingsMouseButton):
+#                     menu()
+        
+#         pygame.display.update()
+
+
+
+# def playGame():
+
+#     pygame.display.set_caption("yeahyeah")
+
+#     while not done:
+
+#         playerMousePosition = pygame.mouse.get_pos()
+#         screen.fill("black") #possibly not needed
+
+#         returnButton = classes.generalpurposeButton(image=None, position=(1300, 0), textinput="Return", font=pygameGetFont(25), colour="Green", 
+#         collisioncolour="Red")
+
+#         returnButton.colourSwapOnHover(playerMousePosition)
+#         returnButton.update(screen)
+
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 pygame.quit()
+#             if event.type == pygame.MOUSEBUTTONDOWN:
+#                 if returnButton.detectMouseInput(playerMousePosition):
+#                     menu()
+        
+#         pygame.display.update()
+        
+
+        
+
+
     
+#     pygame.display.flip()
+ 
+#     clock.tick(15)
     
-    pygame.display.flip()
- 
-    clock.tick(15)
- 
-pygame.quit()
+# pygame.quit()
 
 

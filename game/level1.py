@@ -25,7 +25,7 @@ platform3 = classes.PlatformBlock(500, 800, 100, 50, colours.BLACK)
 platform4 = classes.PlatformBlock(1120, 400, 50, 150, colours.YELLOW)
 platform5 = classes.PlatformBlock(1400, 600, 500, 300, colours.GREEN)
 platform6 = classes.PlatformBlock(2100, 400, 500, 300, colours.GREEN)
-movingPlatform1 = classes.MovingPlatformBlock(250, 400, 100, 100, 300, 100, 200, 200, colours.PURPLE, 3, 2)
+movingPlatform1 = classes.MovingPlatformBlock(1100, 400, 1100, 100, 1400, 100, 200, 200, colours.PURPLE, 3, 2)
 
 
 
