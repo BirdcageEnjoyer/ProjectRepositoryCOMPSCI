@@ -39,9 +39,25 @@ class Character(pygame.sprite.Sprite):
             # self.isTouchingGround = False    # uncomment when collisions are added
             
     def update(self, platformList):
-
+        changeinX = 0
+        changeinY = 0
         self.rect.x += self.velX
+        changeinX = self.velX
+        collisionuncertainty = 25
     
+
+    
+        # for block in collisionList:
+        #     if block.colliderect(self.rect.x + changeinX, self.rect.y, self.width, self.height):
+        #         changeinX = 0
+        #     if block.colliderect(self.rect.x, self.rect.y + changeinY, self.width, self.height):
+        #         if self.velY >= 0:
+        #             changeinY = block.bottom - self.rect.top
+        #             self.velY = 0
+        #         elif self.velY < 0:
+        #             changeinY = block.top - self.rect.bottom
+        #             self.velY = 0
+        #             self.isTouchingGround = False
 
         collisionList = pygame.sprite.spritecollide(self, platformList, False) # this variable is a list of objects from the group of sprites that
         #include the platforms of the level the character is on that can be stood on that my character has collided with
@@ -49,12 +65,27 @@ class Character(pygame.sprite.Sprite):
        
     
         for block in collisionList:
-            if self.rect.colliderect(block.rect):
+            if isinstance(block, PlatformBlock):
+                if self.rect.colliderect(block.rect):
         
-                if self.movingLeft == True:
-                    self.rect.left = block.rect.right
-                elif self.movingRight == True:
-                    self.rect.right = block.rect.left
+                    if self.movingLeft == True:
+                        self.rect.left = block.rect.right
+                    elif self.movingRight == True:
+                        self.rect.right = block.rect.left
+            if isinstance(block, MovingPlatformBlock):
+                if self.rect.colliderect(block.rect):
+                    # if block.velX > 0 and (self.rect.x >= block.rect.x):
+                    #     self.rect.left = block.rect.right
+                    # if block.velX <= 0 and (self.rect.x >= block.rect.x):
+
+                    if self.rect.x >= block.rect.x:
+                        self.rect.left = block.rect.right
+                    if self.rect.x <= block.rect.x:
+                        self.rect.right = block.rect.left
+                    
+                
+
+                
         # the for loop goes through every object that we have collided with and then the nested if statement checks for collision of my player's
         # rectangular hitbox against the object's rectangular hitbox, the method i choose to use here is colliderect which uses rectangles to check
         # for collisions
@@ -66,6 +97,7 @@ class Character(pygame.sprite.Sprite):
         if self.velY > 20: 
             self.velY = 20
         self.rect.y += self.velY
+        changeinY += self.velY
 
         collisionList = pygame.sprite.spritecollide(self, platformList, False) #refreshes collisionList as it is now stale, if we used the
         #collisionList from before, the variable is detecting collision from the previous position, after self.rect.x has been updated via self.velx
@@ -74,15 +106,36 @@ class Character(pygame.sprite.Sprite):
         self.isTouchingGround = False
         
         for block in collisionList:
-            
+            # if isinstance(block, MovingPlatformBlock):
+            #     self.rect.x += block.velX  this caused an issue because it was checked before the standard collision checks
             if self.rect.colliderect(block.rect):
-                if self.velY > 0:
-                    self.rect.bottom = block.rect.top
-                    self.velY = 0
-                    self.isTouchingGround = True
-                elif self.velY < 0:
-                    self.rect.top = block.rect.bottom
-                    self.velY = 0
+                # if isinstance(block, PlatformBlock):
+                    if self.velY > 0:
+                        self.rect.bottom = block.rect.top
+                        self.velY = 0
+                        self.isTouchingGround = True
+
+                    # if isinstance(block, MovingPlatformBlock): #isinstance checks if the block that we are currently inspecting is of the class 
+                    #     #for moving platforms
+                    #     self.rect.x += block.velX 
+                    #     self.rect.y += block.velY
+                    elif self.velY < 0:
+                        self.rect.top = block.rect.bottom
+                        self.velY = 0
+                    collisionList = pygame.sprite.spritecollide(self, platformList, False)
+
+                    if isinstance(block, MovingPlatformBlock):
+                        self.rect.x += block.velX * 2
+                # if isinstance(block, MovingPlatformBlock):
+                #     if self.velY > 0:
+                #         self.rect.bottom = block.rect.top
+        
+        # collisionList = pygame.sprite.spritecollide(self, platformList, False)
+        
+
+    
+            
+            
         # since gravity is being added every iteration of update(), i have to reset vertical velocity so that the player doesn't fall through from the
         # top, or go into the platform from below
 
@@ -94,7 +147,10 @@ class Character(pygame.sprite.Sprite):
             if self.lives <= 0:
                 pass #self.rect.x, self.rect.y = beginning position x, beginning position y
 
-
+    
+          
+                    
+     
 
 
     def collisionwithkillblock(self, killBlockList):
@@ -133,7 +189,7 @@ class PlatformBlock(pygame.sprite.Sprite):
 
     # def drawPlatform(self, givenScreen):
     #     pygame.draw.rect(givenScreen, self.colour, [self.xPosition, self.yPosition, self.length, self.height])
-
+    # unnecessary now that i have a procedure that draws each block in each level
 
 
 
@@ -151,19 +207,36 @@ class MovingPlatformBlock(pygame.sprite.Sprite):
         self.colour = colour
         self.velX = velX
         self.velY = velY
-        self.image = pygame.Surface((60, 40))
+        self.image = pygame.Surface((200, 100))
         self.image.fill(colours.PURPLE)
         self.rect = self.image.get_rect(topleft=(X,Y))
+        self.platformGoLeft = False
+        self.platformGoRight = False
+        
     
     def move(self):
-        if self.rect.x <= self.lowerx:
-            self.rect.x += self.velX
-        if self.rect.x >= self.upperx:
-            self.rect.x -= self.velX
-        if self.rect.y <= self.lowery:
-            self.rect.y += self.velY
-        if self.rect.y >= self.uppery:
-            self.rect.y -= self.velY
+        self.rect.y += self.velY
+        self.rect.x += self.velX
+
+        if self.rect.left < min(self.lowerx, self.upperx) or self.rect.left > max(self.lowerx, self.upperx):
+            self.velX = self.velX * -1
+
+        
+        if self.rect.top < min(self.lowery, self.uppery) or self.rect.top > max(self.lowery, self.uppery):
+            self.velY = self.velY * -1
+        
+        # if self.velX > 0:
+        #     self.platformGoRight = True
+        # elif self.velX < 0:
+        #     self.platformGoLeft = True
+
+    def velToAddOn(self, playerVelX, playerVelY, needX, needY):
+        if needX == True:
+            return playerVelX - self.velX
+        elif needY == True:
+            pass #figure this out later
+        
+        
 
         
 
@@ -199,7 +272,7 @@ class KillBlock(pygame.sprite.Sprite):
         # self.killblockImage.fill(self.colour)
         self.rect = self.killblockImage.get_rect(topleft=(self.x, self.y))
         self.collisionList = collisionList
-                            
+
 
 
     def dealDamage(self, health):

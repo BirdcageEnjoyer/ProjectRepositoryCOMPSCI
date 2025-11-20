@@ -25,7 +25,7 @@ platform3 = classes.PlatformBlock(500, 800, 100, 50, colours.BLACK)
 platform4 = classes.PlatformBlock(1120, 400, 50, 150, colours.YELLOW)
 platform5 = classes.PlatformBlock(1400, 600, 500, 300, colours.GREEN)
 platform6 = classes.PlatformBlock(2100, 400, 500, 300, colours.GREEN)
-movingPlatform1 = classes.MovingPlatformBlock(250, 400, 100, 100, 900, 500, 100, 50, colours.PURPLE, 5, 5)
+movingPlatform1 = classes.MovingPlatformBlock(250, 400, 100, 100, 300, 100, 200, 200, colours.PURPLE, 3, 2)
 
 
 
@@ -41,6 +41,7 @@ level1platforms.add(platform6)
 
 level1platforms.add(movingPlatform1)
 
+level1groundplatforms = pygame.sprite.Group()
 
 
 
@@ -48,10 +49,21 @@ def drawLevel(givenScreen, offsetX, offsetY): #rectangles 3rd parameter follow x
 
     movingPlatform1.move()
     
-    givenScreen.blit(platform2.blockImage, (platform2.rect.x - offsetX, platform2.rect.y - offsetY))
-    givenScreen.blit(platform1.blockImage, (platform1.rect.x - offsetX, platform1.rect.y - offsetY))
-    # givenScreen.blit(platform3.blockImage, (platform3.rect.x - offsetX, platform3.rect.y - offsetY))
-    # givenScreen.blit(platform4.blockImage, (platform4.rect.x - offsetX, platform4.rect.y - offsetY))
-    givenScreen.blit(movingPlatform1.image, (movingPlatform1.rect.x - offsetX, movingPlatform1.rect.y - offsetY))
-    givenScreen.blit(platform5.blockImage, (platform5.rect.x - offsetX, platform5.rect.y - offsetY))
-    givenScreen.blit(platform6.blockImage, (platform6.rect.x - offsetX, platform6.rect.y - offsetY))
+    # givenScreen.blit(platform2.blockImage, (platform2.rect.x - offsetX, platform2.rect.y - offsetY))
+    # givenScreen.blit(platform1.blockImage, (platform1.rect.x - offsetX, platform1.rect.y - offsetY))
+    # # givenScreen.blit(platform3.blockImage, (platform3.rect.x - offsetX, platform3.rect.y - offsetY))
+    # # givenScreen.blit(platform4.blockImage, (platform4.rect.x - offsetX, platform4.rect.y - offsetY))
+    # givenScreen.blit(movingPlatform1.image, (movingPlatform1.rect.x - offsetX, movingPlatform1.rect.y - offsetY))
+    # givenScreen.blit(platform5.blockImage, (platform5.rect.x - offsetX, platform5.rect.y - offsetY))
+    # givenScreen.blit(platform6.blockImage, (platform6.rect.x - offsetX, platform6.rect.y - offsetY))
+
+    # in order to make it more efficient, we can just use a for loop to iterate through every instance of the platforms of the map
+    # and blit each platform onto the map
+
+    for collidableplatform in level1platforms:
+        if isinstance(collidableplatform, classes.MovingPlatformBlock):
+            collidableplatform.move()
+            givenScreen.blit(collidableplatform.image, (collidableplatform.rect.x - offsetX, collidableplatform.rect.y - offsetY))
+        else:
+            givenScreen.blit(collidableplatform.blockImage, (collidableplatform.rect.x - offsetX, collidableplatform.rect.y - offsetY))
+

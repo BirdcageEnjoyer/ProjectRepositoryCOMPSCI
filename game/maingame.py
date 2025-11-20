@@ -77,7 +77,8 @@ bgwidth = bglevel1.get_width()
 bgrect = bglevel1.get_rect()
 
 backgroundupdate = math.ceil(1400/bgwidth) + 1
-bgscroll = 0
+bgscroll = 0 # make a new variable that checks old x position, if it is not the same as the current then the scroll works otherwise it stays in place
+# if it is still equal to old x because thatm eans we
 
 pygame.display.set_caption("you don't want to see me infuriated")
 
@@ -120,6 +121,7 @@ while not done:
 
     if player.level == 1:
         player.update(level1PlatformList)
+        # level1.movingPlatform1.move() #possible configuration
     # if player.level == 2:
     #     player.update()
     # if player.level == 3:
