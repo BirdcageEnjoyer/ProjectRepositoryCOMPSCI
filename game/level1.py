@@ -26,7 +26,7 @@ platform4 = classes.PlatformBlock(1120, 400, 50, 150, colours.YELLOW)
 platform5 = classes.PlatformBlock(1400, 600, 500, 300, colours.GREEN)
 platform6 = classes.PlatformBlock(2100, 400, 500, 300, colours.GREEN)
 movingPlatform1 = classes.MovingPlatformBlock(1100, 400, 1100, 100, 1400, 100, 200, 200, colours.PURPLE, 3, 2)
-
+platform7 = classes.PlatformBlock(-4000, 600, 4600, 300, colours.GREEN)
 
 
 level1platforms = pygame.sprite.Group()
@@ -38,7 +38,7 @@ level1platforms.add(platform3)
 level1platforms.add(platform4)
 level1platforms.add(platform5)
 level1platforms.add(platform6)
-
+level1platforms.add(platform7)
 level1platforms.add(movingPlatform1)
 
 level1groundplatforms = pygame.sprite.Group()
