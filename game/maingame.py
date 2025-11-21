@@ -43,7 +43,6 @@ def playGame():
         
 
 
-
 def settings():
     while not done:
         
@@ -107,7 +106,13 @@ def menu():
                     pygame.quit()
         
         pygame.display.update()
-        
+
+
+
+
+
+
+
 
 #w
 #W
