@@ -102,8 +102,9 @@ def playGame(bgscroll):
         playerMousePosition = pygame.mouse.get_pos()
        
 
-        returnButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(1300, 0), textinput="Return", font=pygameGetFont(25), colour="Green", 
+        returnButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(1200, 100), textinput="Return", font=pygameGetFont(125), colour="Green", 
         collisioncolour="Red")
+  
 
         returnButton.colourSwapOnHover(playerMousePosition)
         
@@ -264,7 +265,7 @@ def menu():
         menuRect = menuTitleText.get_rect(center=(700, 200))
 
         startGameButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 300), textinput="Begin", 
-        font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")
+        font=pygameGetFont(75), colour="#964B00", collisioncolour="Red")
 
         settingsButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 400), textinput="Settings",
         font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")

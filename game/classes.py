@@ -27,8 +27,26 @@ class Character(pygame.sprite.Sprite):
         #self. multipliers, difficulty etc later on
         self.movingLeft = False
         self.movingRight = False
-        
+        self.inAttackState = False
+        self.inBlockState = False
+        self.inDodgeState = False
     
+
+    def attackControl(self, keyinput):
+        if keyinput == pygame.K_k:
+            pass
+            #perform light attack
+        elif keyinput == pygame.K_l:
+            pass #perform heavy attack
+
+    def blockControl(self, keyinput, currentTime):
+        if keyinput == pygame.K_f:
+            self.inBlockState = True
+        
+        
+            #
+
+
     def addGravity(self):
         self.gravity += 1
         self.velY = self.gravity
@@ -38,7 +56,7 @@ class Character(pygame.sprite.Sprite):
             self.gravity = -22.3 #make it so that when jumping, once you collide and are on something, then you can jump again, put if statement here
             # self.isTouchingGround = False    # uncomment when collisions are added
             
-    def update(self, platformList):
+    def update(self, platformList): # add a time parameter
         changeinX = 0
         changeinY = 0
         self.rect.x += self.velX
@@ -146,7 +164,8 @@ class Character(pygame.sprite.Sprite):
             self.lives -= 1
             if self.lives <= 0:
                 pass #self.rect.x, self.rect.y = beginning position x, beginning position y
-
+            
+        
     
           
                     
@@ -274,7 +293,8 @@ class generalpurposeButton(pygame.sprite.Sprite):
 
     def update(self, givenScreen):
         if self.image is not None:
-            givenScreen.blit(self.image, self.rect)
+            # givenScreen.blit(self.image, self.rect)
+            pass  #problem code, remove this is caused the error for menu
         givenScreen.blit(self.displayedtext, self.textrect)
     
     def detectMouseInput(self, mouseposition):
