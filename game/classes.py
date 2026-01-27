@@ -28,23 +28,40 @@ class Character(pygame.sprite.Sprite):
         self.movingLeft = False
         self.movingRight = False
         self.inAttackState = False
-        self.inBlockState = False
-        self.inDodgeState = False
+        self.actionState = "nothing"
+        self.previousDirectionR = False
+        self.previousDirectionL = False
+        self.gameState = "menu"
+        self.attackCooldownTimer = 120 # this will be decremented everytime attack is pressed, as long as the player misses, once it hits 0 it gets reset
+        #then player can attack again, or if they land the attack they can keep attacking
+        self.timeInAttackState = 0
+
+
+    def createAttackHitbox(self):
+        rectangularHitbox = None
+        if self.previousDirectionL == True:
+            rectangularHitbox = pygame.Rect(self.rect.left - 30, self.rect.y + 5, 35, 35) 
+        elif self.previousDirectionR == True:
+            rectangularHitbox = pygame.Rect(self.rect.right, self.rect.y + 5, 35, 35)
+        return rectangularHitbox
+            
+
+    def attackActivation(self, keyinput):
+        if self.inAttackState == False:
+            self.inAttackState = True
+            self.actionState = "attack"
+            self.timeInAttackState = pygame.time.get_ticks() # counts time at which the player has started the attack
+
+    def attackUpdater(self):
+        currentTime = pygame.time.get_ticks()
+        if self.inAttackState == True and currentTime - self.timeInAttackState > self.attackCooldownTimer:
+            if self.actionState == "attack":
+                self.actionState = "nothing"
+            self.inAttackState = False
     
 
-    def attackControl(self, keyinput):
-        if keyinput == pygame.K_k:
-            pass
-            #perform light attack
-        elif keyinput == pygame.K_l:
-            pass #perform heavy attack
 
-    def blockControl(self, keyinput, currentTime):
-        if keyinput == pygame.K_f:
-            self.inBlockState = True
-        
-        
-            #
+
 
 
     def addGravity(self):
@@ -63,7 +80,7 @@ class Character(pygame.sprite.Sprite):
         changeinX = self.velX
         collisionuncertainty = 25
     
-
+  
     
         # for block in collisionList:
         #     if block.colliderect(self.rect.x + changeinX, self.rect.y, self.width, self.height):
@@ -189,6 +206,33 @@ class Character(pygame.sprite.Sprite):
     # def drawPlayer(self, screen):
     #     pygame.draw.rect(screen, colours.RED, [self.centreX, self.centreY, self.width, self.height]) #DO
 
+class BasicEnemy(pygame.sprite.Sprite):
+    def __init__(self, xPos, yPos, boundaryL, boundaryR, colour, velocityX):
+        super().__init__()
+        self.image = pygame.Surface((40, 40))
+        self.colour = colour
+        self.image.fill(self.colour)
+        self.xPos = xPos #used for the top left corners of the enemy's rectangle, 
+        self.yPos = yPos
+        self.rect = self.image.get_rect(topleft=(self.xPos, self.yPos))
+        self.velX = velocityX
+
+        self.boundaryL = boundaryL 
+        self.boundaryR = boundaryR
+
+    def update(self):
+        self.rect.x += self.newVel
+        if self.rect.left <= self.boundaryL:
+            
+            self.velX = self.velX * 1 #redundant, just for clarity
+            self.rect.left = self.boundaryL
+
+        elif self.rect.right >= self.boundaryR:
+
+            self.rect.right = self.boundaryR
+            self.velXel = -1 * self.velX # reverses direction since if the enemy hits the right boundary, it should stop moving furthter to the right,
+            #and start moving left, so make velocity negative so it subtracts from x to go left
+
 
 class PlatformBlock(pygame.sprite.Sprite):
     def __init__(self, xPos, yPos, length, height, colour):
@@ -203,6 +247,9 @@ class PlatformBlock(pygame.sprite.Sprite):
         self.height = height
         self.colour = colour
          #gets the topleft corner of the block
+
+
+   
 
     # def drawPlatform(self, givenScreen):
     #     pygame.draw.rect(givenScreen, self.colour, [self.xPosition, self.yPosition, self.length, self.height])

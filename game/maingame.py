@@ -87,6 +87,9 @@ done = False
 clock = pygame.time.Clock()
 
 
+timerFont = pygame.font.Font(None, 50)
+
+
 bgx = 0
 
 bgscroll = 0
@@ -110,7 +113,7 @@ def playGame(bgscroll):
         
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or player.lives <= 0:
+            if event.type == pygame.QUIT: #or player.lives <= 0:
                 done = True
                 pygame.quit()
             if event.type == pygame.KEYDOWN: # later on, make variables for the keys so that the player can change the keys for movement, then replace k_...
@@ -132,7 +135,16 @@ def playGame(bgscroll):
                     player.velX = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if returnButton.detectMouseInput(playerMousePosition):
+                    player.gameState = "menu"
                     menu()
+
+        
+        if player.inAttackState == True:
+            attackHitbox = player.createAttackHitbox()
+            for eachEnemy in level1.level1enemies:
+                if attackHitbox.colliderect(eachEnemy.rect):
+                    eachEnemy.kill()
+                    break   
         
         if player.rect.y > 3000:
             player.rect.x = levelBeginningX
@@ -142,7 +154,12 @@ def playGame(bgscroll):
 
 
 
-        
+        if player.lives <= 0:
+            player.lives = 3
+            player.level = 1
+            player.gameState = "menu"
+            gameOverScreen()
+            
 
         if player.level == 1:
             player.update(level1PlatformList)
@@ -151,6 +168,12 @@ def playGame(bgscroll):
         #     player.update()
         # if player.level == 3:
         #     player.update()
+        if player.gameState == "playing": #and player.level == 1:
+            level1.level1timelimit -= 1/60 #since it is 60 fps, must divide by 60 because otherwise our timer decreases too quickly
+            if level1.level1timelimit <= 0:
+                player.gameState = "menu"
+                gameOverScreen()
+                
 
 
         cameraXoffset = (player.rect.centerx - 700)
@@ -158,7 +181,6 @@ def playGame(bgscroll):
 
 
         
-
         
 
 
@@ -203,17 +225,24 @@ def playGame(bgscroll):
         if player.level == 1:
             
             level1.drawLevel(screen, cameraXoffset, cameraYoffset)
+            timerDisplayed = timerFont.render(str(round(level1.level1timelimit, 2)), True, "#F4DBDB14")
+
             # levelBeginningX = level1.startPositionX
             # levelBeginningY = level1.startPositionY
         if player.level == 2:
             level2.drawLevel(screen, GREEN, RED, YELLOW, BLACK) # parameters for these 2 levels for now are just placeholders. EDIT, OUTDATED
+            timerDisplayed = timerFont.render(str(round(level1.level1timelimit, 2)), True, "#F4DBDB14") #REPLACE with level 2 timer
+
             #levelBeginningX = level2.startPositionX
             #levelBeginningY = level2.startPositionY
         if player.level == 3:
             level3.drawLevel(screen, GREEN, RED)
+            timerDisplayed = timerFont.render(str(round(level1.level1timelimit, 2)), True, "#F4DBDB14") #Replace with level 3 timer
+
             #levelBeginningX = level3.startPositionX
             #levelBeginningY = level3.startPositionY
 
+        screen.blit(timerDisplayed, (25, 25))
         returnButton.update(screen)
 
      
@@ -249,7 +278,52 @@ def settings():
         
         pygame.display.update()
 
+def gameOverScreen():
+    while True:
+        gameOverText = pygameGetFont(100).render("Game Over, Retry?", True, "#0D0B0B")
+        gameOverRectangle = gameOverText.get_rect(center=(700, 200)) #put centre of screen as position
+        gameOverBackground = pygame.image.load("Screenshot 2023-04-08 190551.png").convert()
+      
+        screen.blit(gameOverBackground, (0,0))
 
+        screen.blit(gameOverText, gameOverRectangle)
+        
+
+        startAgainButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 400), textinput="Start Over", font=pygameGetFont(50),
+        colour="#15A659", collisioncolour="Red")
+
+        mousePosition = pygame.mouse.get_pos()
+
+        startAgainButton.colourSwapOnHover(mousePosition)
+
+        settingsButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 500), textinput="Settings",
+        font=pygameGetFont(50), colour="#15A659", collisioncolour="Red")
+
+        closeButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 600), textinput="Close",
+        font=pygameGetFont(50), colour="#15A659", collisioncolour="Red")
+
+        startAgainButton.update(screen)
+        settingsButton.update(screen)
+        closeButton.update(screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if startAgainButton.detectMouseInput(mousePosition):
+                    player.gameState = "playing"
+                    player.lives = 3
+                    player.level = 1
+                    player.rect.x = levelBeginningX # change the earlier version later so that it also uses levelbeginning
+                    player.rect.y = levelBeginningY
+                    level1.level1timelimit = 10
+                    playGame(bgscroll)
+
+
+        pygame.draw.rect(screen, RED, startAgainButton.rect, 1)
+        pygame.draw.rect(screen, RED, settingsButton.rect, 1)
+        pygame.draw.rect(screen, RED, closeButton.rect, 1)
+        pygame.display.update()
 
 
 def menu():
@@ -285,6 +359,7 @@ def menu():
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if startGameButton.detectMouseInput(mousePosition):
+                    player.gameState = "playing"
                     playGame(bgscroll)
                 elif settingsButton.detectMouseInput(mousePosition):
                     pass #put settings() here once it has been made
@@ -295,3 +370,7 @@ def menu():
 
 
 menu()
+
+
+
+
