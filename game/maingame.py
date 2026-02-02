@@ -120,14 +120,19 @@ def playGame(bgscroll):
                 #with the variables so that depending on which key the player sets to as move up left right down, it will move accordingly ...
                 if event.key == pygame.K_SPACE:
                     player.jumpControl()
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_a: #previousdirection attributes are set whenever the player performs a movement horizontally
                     player.movingLeft = True
                     player.velX = -5
+                    # player.previousDirectionR = False
+                    # player.previousDirectionL = True
                 if event.key == pygame.K_d:
                     player.movingRight = True
                     player.velX = 5
+                    # player.previousDirectionL = False
+                    # player.previousDirectionR = True
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_a: #previous direction attributes untouched as we need to know what direction the player
+                    #is now facing
                     player.movingLeft = False
                     player.velX = 0
                 if event.key == pygame.K_d:

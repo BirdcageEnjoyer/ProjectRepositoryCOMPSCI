@@ -44,6 +44,12 @@ class Character(pygame.sprite.Sprite):
         elif self.previousDirectionR == True:
             rectangularHitbox = pygame.Rect(self.rect.right, self.rect.y + 5, 35, 35)
         return rectangularHitbox
+
+    # def createAttackHitbox(self):
+        
+    #     rectangularHitbox = pygame.Rect(self.rect.right, self.rect.y + 5, 35, 35) # creates a hitbox for the attack in front of player's character
+    #     return rectangularHitbox
+
             
 
     def attackActivation(self, keyinput):
@@ -60,7 +66,14 @@ class Character(pygame.sprite.Sprite):
             self.inAttackState = False
     
 
-
+    # def directionCheck(self):
+    #     if self.movingLeft == True: # checks what direction player is moving during the frame, and sets
+    #         #the attributes for direction checking that don't change even when the player stands still
+    #         self.previousDirectionL = True
+    #         self.previousDirectionR = False
+    #     elif self.movingRight == True:
+    #         self.previousDirectionL = False
+    #         self.previousDirectionR = True
 
 
 
