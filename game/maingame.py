@@ -122,14 +122,14 @@ def playGame(bgscroll):
                     player.jumpControl()
                 if event.key == pygame.K_a: #previousdirection attributes are set whenever the player performs a movement horizontally
                     player.movingLeft = True
-                    player.velX = -5
-                    # player.previousDirectionR = False
-                    # player.previousDirectionL = True
+                    player.velX = -7
+                    player.previousDirectionR = False
+                    player.previousDirectionL = True
                 if event.key == pygame.K_d:
                     player.movingRight = True
-                    player.velX = 5
-                    # player.previousDirectionL = False
-                    # player.previousDirectionR = True
+                    player.velX = 7
+                    player.previousDirectionL = False
+                    player.previousDirectionR = True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a: #previous direction attributes untouched as we need to know what direction the player
                     #is now facing
@@ -142,14 +142,22 @@ def playGame(bgscroll):
                 if returnButton.detectMouseInput(playerMousePosition):
                     player.gameState = "menu"
                     menu()
+                player.attackActivation()
+                
+
+            
 
         
-        if player.inAttackState == True:
-            attackHitbox = player.createAttackHitbox()
-            for eachEnemy in level1.level1enemies:
-                if attackHitbox.colliderect(eachEnemy.rect):
-                    eachEnemy.kill()
-                    break   
+        # if player.inAttackState == True:
+        #     attackHitbox = player.createAttackHitbox()
+        #     # pygame.draw.rect(screen, (255, 255, 0), attackHitbox, 2)
+        #     if attackHitbox is not None:
+        #         pygame.draw.rect(screen, (255, 255, 0), attackHitbox, 2)
+        #         for eachEnemy in level1.level1enemies:
+        #             pygame.draw.rect(screen, (0, 255, 0), eachEnemy.rect, 5)
+        #             if attackHitbox.colliderect(eachEnemy.rect):
+        #                 eachEnemy.kill()
+        #                 break   
         
         if player.rect.y > 3000:
             player.rect.x = levelBeginningX
@@ -164,10 +172,25 @@ def playGame(bgscroll):
             player.level = 1
             player.gameState = "menu"
             gameOverScreen()
-            
+        
 
-        if player.level == 1:
-            player.update(level1PlatformList)
+        # if player.level == 1:
+            # player.attackUpdater()
+            # player.update(level1PlatformList)
+             
+            # # if player.inAttackState == True:
+            # attackHitbox = player.createAttackHitbox()
+            #     # pygame.draw.rect(screen, (255, 255, 0), attackHitbox, 2)
+            # if attackHitbox: # is not None:
+            #     pygame.draw.rect(screen, (255, 255, 0), attackHitbox, 2)
+            #     for eachEnemy in level1.level1enemies:
+            #         pygame.draw.rect(screen, (0, 255, 0), eachEnemy.rect, 5)
+            #         if attackHitbox.colliderect(eachEnemy.rect):
+            #             eachEnemy.kill()
+            #             break   
+        
+
+
             # level1.movingPlatform1.move() #possible configuration
         # if player.level == 2:
         #     player.update()
@@ -185,16 +208,11 @@ def playGame(bgscroll):
         cameraYoffset = (player.rect.centery - 500)
 
 
-        
-        
-
-
 
         
         #drawing code below
 
-    
-
+        # print(player.actionState)
 
 
         if player.movingRight:
@@ -224,11 +242,24 @@ def playGame(bgscroll):
 
 
         # level1PlatformList.draw(screen)
-        screen.blit(player.playerImage, (player.rect.x - cameraXoffset, player.rect.y - cameraYoffset))
-    
+        # screen.blit(player.playerImage, (player.rect.x - cameraXoffset, player.rect.y - cameraYoffset))
+        screen.blit(player.image, (player.rect.x - cameraXoffset, player.rect.y - cameraYoffset))
         
         if player.level == 1:
-            
+        
+            player.update(level1PlatformList)
+             
+        
+            attackHitbox = player.createAttackHitbox()
+                # pygame.draw.rect(screen, (255, 255, 0), attackHitbox, 2)
+            if attackHitbox:
+                pygame.draw.rect(screen, (255, 255, 0), (attackHitbox.x - cameraXoffset, attackHitbox.y - cameraYoffset, attackHitbox.width, attackHitbox.height), 2) #just for debugging
+                for eachEnemy in level1.level1enemies:
+                    # eachEnemy.update()
+                    pygame.draw.rect(screen, (0, 255, 0), (eachEnemy.rect.x - cameraXoffset, eachEnemy.rect.y - cameraYoffset, eachEnemy.rect.width, eachEnemy.rect.height), 5) # just for debugging
+                    if attackHitbox.colliderect(eachEnemy.rect):
+                        eachEnemy.kill()
+                        break   
             level1.drawLevel(screen, cameraXoffset, cameraYoffset)
             timerDisplayed = timerFont.render(str(round(level1.level1timelimit, 2)), True, "#F4DBDB14")
 
@@ -252,6 +283,21 @@ def playGame(bgscroll):
 
      
     
+        # if player.level == 1:
+        #     player.attackUpdater()
+        #     player.update(level1PlatformList)
+             
+        #     # if player.inAttackState == True:
+        #     attackHitbox = player.createAttackHitbox()
+        #         # pygame.draw.rect(screen, (255, 255, 0), attackHitbox, 2)
+        #     if attackHitbox: # is not None:
+        #         pygame.draw.rect(screen, (255, 255, 0), (attackHitbox.x - cameraXoffset, attackHitbox.y - cameraYoffset, attackHitbox.width, attackHitbox.height), 2) #just for debugging
+        #         for eachEnemy in level1.level1enemies:
+        #             # eachEnemy.update()
+        #             pygame.draw.rect(screen, (0, 255, 0), (eachEnemy.rect.x - cameraXoffset, eachEnemy.rect.y - cameraYoffset, eachEnemy.rect.width, eachEnemy.rect.height), 5) # just for debugging
+        #             if attackHitbox.colliderect(eachEnemy.rect):
+        #                 eachEnemy.kill()
+        #                 break   
         
        
         pygame.display.update()

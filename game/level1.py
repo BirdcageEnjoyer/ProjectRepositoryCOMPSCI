@@ -15,7 +15,7 @@ boundaryEndBlock1_Y = [400, 550]
 startPositionX = 15
 startPositionY = 600
 
-level1timelimit = 10
+level1timelimit = 500
 
 
 
@@ -29,14 +29,14 @@ movingPlatform1 = classes.MovingPlatformBlock(1100, 400, 1100, 100, 1400, 100, 2
 platform7 = classes.PlatformBlock(-4000, 600, 4600, 300, colours.GREEN)
 
 
-enemy1 = classes.BasicEnemy(700, 400, 650, 750, colours.RED, 3)
+enemy1 = classes.BasicEnemy(700, 550, 400, 1000, colours.RED, 3)
 
 level1enemies = pygame.sprite.Group()
 level1enemies.add(enemy1)
 
 
 level1platforms = pygame.sprite.Group()
-
+level1movingplatforms = pygame.sprite.Group()
 
 level1platforms.add(platform1)
 level1platforms.add(platform2)
@@ -53,8 +53,12 @@ level1groundplatforms = pygame.sprite.Group()
 
 def drawLevel(givenScreen, offsetX, offsetY): #rectangles 3rd parameter follow x, y, xlength, ylength, also draw from the position given, towards the right, and down
 
+  
+
     movingPlatform1.move()
-    givenScreen.blit(enemy1.image, (enemy1.rect.x - offsetX, enemy1.rect.y - offsetY))
+    for enemy in level1enemies:
+        enemy.update()
+        givenScreen.blit(enemy.image, (enemy.rect.x - offsetX, enemy.rect.y - offsetY))
     # givenScreen.blit(platform2.blockImage, (platform2.rect.x - offsetX, platform2.rect.y - offsetY))
     # givenScreen.blit(platform1.blockImage, (platform1.rect.x - offsetX, platform1.rect.y - offsetY))
     # # givenScreen.blit(platform3.blockImage, (platform3.rect.x - offsetX, platform3.rect.y - offsetY))

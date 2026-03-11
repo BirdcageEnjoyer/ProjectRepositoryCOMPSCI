@@ -5,13 +5,22 @@ import level2
 import level3
 
 
+def getFrames(sheet, framewidth, frameheight, nofframes, row):
+    frames = []
+    for i in range(nofframes):
+        frame = sheet.subsurface((i*framewidth, row*frameheight, framewidth, frameheight))
+        frames.append(frame)
+    return frames
+
+
 
 class Character(pygame.sprite.Sprite):
     
     def __init__(self, width, height, X, Y, currentLevel): # add more parameters later like difficulty, 
         super().__init__()
-        self.playerImage = pygame.Surface((100, 50))
-        self.playerImage.fill(colours.RED)
+        self.playerImage = pygame.Surface((50, 50)) #100, 50
+        # self.playerImage = pygame.image.load
+        self.playerImage.fill(colours.RED) #remove these later due to anims being added
         self.rect = self.playerImage.get_rect(topleft=(700, 500)) #50 50
         # self.centreX = centreXval
         # self.centreY = centreYval
@@ -28,17 +37,46 @@ class Character(pygame.sprite.Sprite):
         self.movingLeft = False
         self.movingRight = False
         self.inAttackState = False
-        self.actionState = "nothing"
-        self.previousDirectionR = False
+        self.actionState = ""
+        self.previousDirectionR = True
         self.previousDirectionL = False
         self.gameState = "menu"
-        self.attackCooldownTimer = 120 # this will be decremented everytime attack is pressed, as long as the player misses, once it hits 0 it gets reset
+        self.attackCooldownTimer = 300 # this will be decremented everytime attack is pressed, as long as the player misses, once it hits 0 it gets reset
         #then player can attack again, or if they land the attack they can keep attacking
         self.timeInAttackState = 0
-
+        self.idleSheet = pygame.image.load("idle.png")
+        self.idleattackSheet = pygame.image.load("idleattack.png")
+        self.moveSheet = pygame.image.load("move.png")
+        self.moveattackSheet = pygame.image.load("moveattack.png")
+        self.deadSheet = pygame.image.load("dead.png")
+        self.takedamageSheet = pygame.image.load("takedamage.png")
+        self.animations = {
+            "idleR": getFrames(self.idleSheet, 64, 64, 12, 2),
+            "idleL": getFrames(self.idleSheet, 64, 64, 12, 1),
+            "moveR": getFrames(self.moveSheet, 64, 64, 6, 2),
+            "moveL": getFrames(self.moveSheet, 64, 64, 6, 1),
+            "attackidleR": getFrames(self.idleattackSheet, 64, 64, 8, 2),
+            "attackidleL": getFrames(self.idleattackSheet, 64, 64, 8, 1),
+            "attackmoveR": getFrames(self.moveattackSheet, 64, 64, 6, 2),
+            "attackmoveL": getFrames(self.moveattackSheet, 64, 64, 6, 1),
+            "takedamageR": getFrames(self.takedamageSheet, 64, 64, 5, 2),
+            "takedamageL": getFrames(self.takedamageSheet, 64, 64, 5, 1),
+            "deadR": getFrames(self.deadSheet, 64, 64, 7, 2),
+            "deadL": getFrames(self.deadSheet, 64, 64, 7, 1) #names of each animation is made up of 3 words connected, the animation will be chosen
+            #based on if the person is attacking, moving/idle, and facing left or right
+        }
+        self.frameIndex = 0
+        self.animationSpeed = 0.1 #0.2
+        self.currentAnim = self.animations["idleR"]
+        self.image = self.currentAnim[0]
+        self.rect = self.image.get_rect(topleft=(700,500)) #un coment
+        self.direction = "R"
+        self.isMoving = "idle"
 
     def createAttackHitbox(self):
         rectangularHitbox = None
+        if self.inAttackState == False:
+            return None
         if self.previousDirectionL == True:
             rectangularHitbox = pygame.Rect(self.rect.left - 30, self.rect.y + 5, 35, 35) 
         elif self.previousDirectionR == True:
@@ -49,10 +87,8 @@ class Character(pygame.sprite.Sprite):
         
     #     rectangularHitbox = pygame.Rect(self.rect.right, self.rect.y + 5, 35, 35) # creates a hitbox for the attack in front of player's character
     #     return rectangularHitbox
-
-            
-
-    def attackActivation(self, keyinput):
+    
+    def attackActivation(self):
         if self.inAttackState == False:
             self.inAttackState = True
             self.actionState = "attack"
@@ -62,7 +98,7 @@ class Character(pygame.sprite.Sprite):
         currentTime = pygame.time.get_ticks()
         if self.inAttackState == True and currentTime - self.timeInAttackState > self.attackCooldownTimer:
             if self.actionState == "attack":
-                self.actionState = "nothing"
+                self.actionState = ""
             self.inAttackState = False
     
 
@@ -179,9 +215,6 @@ class Character(pygame.sprite.Sprite):
                 #         self.rect.bottom = block.rect.top
         
         # collisionList = pygame.sprite.spritecollide(self, platformList, False)
-        
-
-    
             
             
         # since gravity is being added every iteration of update(), i have to reset vertical velocity so that the player doesn't fall through from the
@@ -194,23 +227,19 @@ class Character(pygame.sprite.Sprite):
             self.lives -= 1
             if self.lives <= 0:
                 pass #self.rect.x, self.rect.y = beginning position x, beginning position y
-            
-        
-    
-          
-                    
-     
 
+
+        self.attackUpdater()
+        self.updateDirection()
+        self.updateActionState()
+        self.updateAnimation()
+        self.animationController()
+                    
 
     def collisionwithkillblock(self, killBlockList):
         for block in killBlockList:
             if self.rect.colliderect(block.rect):
                 self.health -= 50
-
-
-
-
-
 
     
     def incrementLevel(self):
@@ -218,6 +247,37 @@ class Character(pygame.sprite.Sprite):
     
     # def drawPlayer(self, screen):
     #     pygame.draw.rect(screen, colours.RED, [self.centreX, self.centreY, self.width, self.height]) #DO
+
+    def updateActionState(self):
+   
+        if self.inAttackState:
+                self.actionState = "attack"
+        if self.velX != 0:
+            self.isMoving = "move"
+            # if self.velX > 0:
+            #     self.direction = "R"
+            # elif self.velX <0:
+            #     self.direction = "L"
+
+    def updateDirection(self):
+        if self.velX > 0:
+            self.direction = "R"
+        elif self.velX <0:
+            self.direction = "L"
+
+    def updateAnimation(self):
+        chosenAnim = self.actionState + self.isMoving + self.direction
+        self.currentAnim = self.animations[chosenAnim]
+
+
+    def animationController(self):
+        self.frameIndex += self.animationSpeed
+        if self.frameIndex >= len(self.currentAnim):
+            self.frameIndex = 0
+        
+        self.image = self.currentAnim[int(self.frameIndex)]
+                
+
 
 class BasicEnemy(pygame.sprite.Sprite):
     def __init__(self, xPos, yPos, boundaryL, boundaryR, colour, velocityX):
@@ -234,16 +294,16 @@ class BasicEnemy(pygame.sprite.Sprite):
         self.boundaryR = boundaryR
 
     def update(self):
-        self.rect.x += self.newVel
+        self.rect.x += self.velX
         if self.rect.left <= self.boundaryL:
             
-            self.velX = self.velX * 1 #redundant, just for clarity
+            self.velX = self.velX * -1 #redundant, just for clarity
             self.rect.left = self.boundaryL
 
         elif self.rect.right >= self.boundaryR:
 
             self.rect.right = self.boundaryR
-            self.velXel = -1 * self.velX # reverses direction since if the enemy hits the right boundary, it should stop moving furthter to the right,
+            self.velX = -1 * self.velX # reverses direction since if the enemy hits the right boundary, it should stop moving furthter to the right,
             #and start moving left, so make velocity negative so it subtracts from x to go left
 
 
@@ -369,5 +429,4 @@ class generalpurposeButton(pygame.sprite.Sprite):
             self.displayedtext = self.font.render(self.textinput, True, self.collisioncolour)
         else:
             self.displayedtext = self.font.render(self.textinput, True, self.colour)
-
 
