@@ -217,10 +217,10 @@ def playGame(bgscroll):
         # print(player.actionState)
 
 
-        if player.movingRight:
-            bgscroll += 5
-        elif player.movingLeft:
-            bgscroll -= 5  
+        # if player.movingRight:
+        #     bgscroll += 5
+        # elif player.movingLeft:
+        #     bgscroll -= 5  
 
         if player.velX > 0:
             bgscroll += 5
