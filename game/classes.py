@@ -18,10 +18,10 @@ class Character(pygame.sprite.Sprite):
     
     def __init__(self, width, height, X, Y, currentLevel): # add more parameters later like difficulty, 
         super().__init__()
-        self.playerImage = pygame.Surface((50, 50)) #100, 50
-        # self.playerImage = pygame.image.load
-        self.playerImage.fill(colours.RED) #remove these later due to anims being added
-        self.rect = self.playerImage.get_rect(topleft=(700, 500)) #50 50
+        # self.playerImage = pygame.Surface((50, 50)) #100, 50
+        # # self.playerImage = pygame.image.load
+        # self.playerImage.fill(colours.RED) #remove these later due to anims being added
+        # self.rect = self.playerImage.get_rect(topleft=(700, 500)) #50 50
         # self.centreX = centreXval
         # self.centreY = centreYval
         self.level = currentLevel
@@ -32,18 +32,23 @@ class Character(pygame.sprite.Sprite):
         self.velX = 0
         self.velY = 0
         self.gravity = 0
+
         self.isTouchingGround = True #by default starts as true because player will be spawning on a block
         #self. multipliers, difficulty etc later on
         self.movingLeft = False
         self.movingRight = False
+
         self.inAttackState = False
         self.actionState = ""
+        
         self.previousDirectionR = True
         self.previousDirectionL = False
+
         self.gameState = "menu"
         self.attackCooldownTimer = 300 # this will be decremented everytime attack is pressed, as long as the player misses, once it hits 0 it gets reset
         #then player can attack again, or if they land the attack they can keep attacking
         self.timeInAttackState = 0
+
         self.idleSheet = pygame.image.load("idle.png")
         self.idleattackSheet = pygame.image.load("idleattack.png")
         self.moveSheet = pygame.image.load("move.png")
@@ -65,13 +70,40 @@ class Character(pygame.sprite.Sprite):
             "deadL": getFrames(self.deadSheet, 64, 64, 7, 1) #names of each animation is made up of 3 words connected, the animation will be chosen
             #based on if the person is attacking, moving/idle, and facing left or right
         }
+
         self.frameIndex = 0
         self.animationSpeed = 0.1 #0.2
+
+        self.spriteOffsetY = 20
+        self.spriteOffsetX = -5
+
         self.currentAnim = self.animations["idleR"]
+
         self.image = self.currentAnim[0]
-        self.rect = self.image.get_rect(topleft=(700,500)) #un coment
+        # self.rect = self.image.get_rect(topleft=(700,500)) #un coment
+        self.rect = pygame.Rect(700,500, 23, 25)
+        self.drawRect = self.image.get_rect(midbottom=self.rect.midbottom)
+        self.drawRect.x += self.spriteOffsetX
+        self.drawRect.y += self.spriteOffsetY
+
         self.direction = "R"
         self.isMoving = "idle"
+
+        self.previousDamageTime = 0
+        self.damageCooldown = 1000
+
+        self.isDead = False
+        self.deathBegin = 0 #death timer for animation 
+        self.respawnDelay = 5000 #5 second respawn timer
+
+        self.inDamageState = False
+        self.damageAnimBegin = 0
+        self.damageAnimDuration = 400
+
+
+
+
+
 
     def createAttackHitbox(self):
         rectangularHitbox = None
@@ -89,10 +121,13 @@ class Character(pygame.sprite.Sprite):
     #     return rectangularHitbox
     
     def attackActivation(self):
-        if self.inAttackState == False:
-            self.inAttackState = True
-            self.actionState = "attack"
-            self.timeInAttackState = pygame.time.get_ticks() # counts time at which the player has started the attack
+
+        if self.inAttackState == False and not self.isDead:
+
+            if self.inDamageState == False:
+                self.inAttackState = True
+                self.actionState = "attack"
+                self.timeInAttackState = pygame.time.get_ticks() # counts time at which the player has started the attack
 
     def attackUpdater(self):
         currentTime = pygame.time.get_ticks()
@@ -123,6 +158,41 @@ class Character(pygame.sprite.Sprite):
             # self.isTouchingGround = False    # uncomment when collisions are added
             
     def update(self, platformList): # add a time parameter
+
+
+        if self.isDead:
+
+            self.velX = 0
+            self.velY = 0
+
+
+        
+            currentTime = pygame.time.get_ticks()
+
+            self.updateAnimation()
+            self.animationController()
+
+
+            if currentTime -self.deathBegin >= self.respawnDelay:
+                if self.lives > 0:
+                    self.health = 100
+
+                    if self.level == 1:
+                        self.rect.x = level1.startPositionX
+                        self.rect.y = level1.startPositionY
+                    if self.level == 2:
+                        self.rect.x = level2.startPositionX
+                        self.rect.y = level2.startPositionY
+                    if self.level == 3:
+                        self.rect.x = level3.startPositionX
+                        self.rect.y = level3.startPositionY
+                    
+                    self.isDead = False
+                    self.actionState = ""
+                    self.frameIndex = 0
+            return
+                    
+
         changeinX = 0
         changeinY = 0
         self.rect.x += self.velX
@@ -199,6 +269,9 @@ class Character(pygame.sprite.Sprite):
                         self.velY = 0
                         self.isTouchingGround = True
 
+                        if isinstance(block, MovingPlatformBlock):
+                            self.rect.x += block.velX * 2
+
                     # if isinstance(block, MovingPlatformBlock): #isinstance checks if the block that we are currently inspecting is of the class 
                     #     #for moving platforms
                     #     self.rect.x += block.velX 
@@ -208,8 +281,8 @@ class Character(pygame.sprite.Sprite):
                         self.velY = 0
                     collisionList = pygame.sprite.spritecollide(self, platformList, False)
 
-                    if isinstance(block, MovingPlatformBlock):
-                        self.rect.x += block.velX * 2
+                    # if isinstance(block, MovingPlatformBlock):
+                    #     self.rect.x += block.velX * 2
                 # if isinstance(block, MovingPlatformBlock):
                 #     if self.velY > 0:
                 #         self.rect.bottom = block.rect.top
@@ -223,16 +296,18 @@ class Character(pygame.sprite.Sprite):
         if self.isTouchingGround == True:
             self.velY = 0
 
-        if self.health <= 0:
-            self.lives -= 1
-            if self.lives <= 0:
-                pass #self.rect.x, self.rect.y = beginning position x, beginning position y
+        # if self.health <= 0:
+        #     self.lives -= 1
+        #     if self.lives <= 0:
+        #         pass #self.rect.x, self.rect.y = beginning position x, beginning position y
 
 
         self.attackUpdater()
         self.updateDirection()
-        self.updateActionState()
-        self.updateAnimation()
+        self.updateActionState() # first do the collisions then do attack update so that the hitbox is created before drawing code
+    
+        self.updateAnimation() #animations/drawing code comes after to make sure they dont overlap with attack and mess up the calculations made for attacking
+        #or look out of place
         self.animationController()
                     
 
@@ -241,6 +316,45 @@ class Character(pygame.sprite.Sprite):
             if self.rect.colliderect(block.rect):
                 self.health -= 50
 
+
+    def takingDamage(self, amountTaken):
+        currentTime = pygame.time.get_ticks()
+
+        if currentTime - self.previousDamageTime >= self.damageCooldown:
+            self.health -= amountTaken
+            self.previousDamageTime = currentTime #damage cooldown to make sure the player doesnt take repeated ticks of damage when they 
+            #pass through an enemy, otherwise they would die instantly even if the damage was low per hit from the enemy
+
+            print("Player health:", self.health)
+
+            self.inDamageState = True
+            self.damageAnimBegin = currentTime
+            self.actionState = "takedamage"
+            self.isMoving = ""
+
+            if self.health <= 0 and not self.isDead: #health check and decrements lives if t he player dies
+                self.lives -= 1
+                self.isDead = True
+                self.deathBegin = pygame.time.get_ticks()
+                self.actionState = "dead"
+                self.isMoving = ""
+                self.velX = 0
+                self.velY = 0
+
+#                 if self.lives > 0:
+#                     self.health = 100
+# # whenever character dies, their position gets brought back to the beginning of the level
+#                     if self.level == 1:
+#                         self.rect.x = level1.startPositionX
+#                         self.rect.y = level1.startPositionY
+
+#                     if self.level == 2:
+#                         self.rect.x = level2.startPositionX
+#                         self.rect.y = level2.startPositionY
+
+#                     if self.level == 3:
+#                         self.rect.x = level3.startPositionX
+#                         self.rect.y = level3.startPositionY
     
     def incrementLevel(self):
         self.level += 1
@@ -249,33 +363,75 @@ class Character(pygame.sprite.Sprite):
     #     pygame.draw.rect(screen, colours.RED, [self.centreX, self.centreY, self.width, self.height]) #DO
 
     def updateActionState(self):
-   
-        if self.inAttackState:
+   # method makes sure that depending on what the character is doing, it changes the state the player is in, so that the correct and corresponding animation
+   #for the action the character is doing is being played at the right time with the right animation
+
+        if self.isDead:
+            self.actionState = "dead"
+            self.isMoving = ""
+            return
+        
+        currentTime = pygame.time.get_ticks()
+        if self.inDamageState:
+            if currentTime - self.damageAnimBegin < self.damageAnimDuration:
+                self.actionState = "takedamage"
+                self.isMoving = ""
+                return #ends this updater early as taking damage has animation priority, i.e if player gets hit they take damage so that needs to
+            #show first
+            else:
+                self.inDamageState = False
+                self.actionState = ""
+
+                #after damage taken checks are done then the other anims are prioritised
+        if self.inAttackState: 
                 self.actionState = "attack"
-        if self.velX != 0:
-            self.isMoving = "move"
-            # if self.velX > 0:
-            #     self.direction = "R"
-            # elif self.velX <0:
-            #     self.direction = "L"
+        if self.inDamageState == False:
+            if self.velX != 0:
+                self.isMoving = "move"
+                
+            else:
+                self.isMoving = "idle"
 
     def updateDirection(self):
-        if self.velX > 0:
+        if self.velX > 0: #checks direction of player's movement so that the correct animation direction is used later, done separately from
+            #previous direction in order to keep organised, and saves time from having to rethink how to link previousdirection attributes with anims
             self.direction = "R"
         elif self.velX <0:
             self.direction = "L"
 
     def updateAnimation(self):
         chosenAnim = self.actionState + self.isMoving + self.direction
-        self.currentAnim = self.animations[chosenAnim]
+        if chosenAnim in self.animations:
+            if self.currentAnim != self.animations[chosenAnim]:
+                self.currentAnim = self.animations[chosenAnim]
+                self.frameIndex = 0
+         #selects the animation that needs to be played based on the data we have on the actions of the player
 
 
-    def animationController(self):
-        self.frameIndex += self.animationSpeed
-        if self.frameIndex >= len(self.currentAnim):
-            self.frameIndex = 0
-        
+
+    def animationController(self): #makes sure the animation is drawn on correctly and that the animations don't play over each other, and also 
+        # makes sure the animation is moving correctly relative to the world scroll
+
+        if self.actionState == "dead":
+            if self.frameIndex < len(self.currentAnim)-1:
+                self.frameIndex += self.animationSpeed
+            # self.image = self.currentAnim[int(self.frameIndex)]
+            else:
+                self.frameIndex = len(self.currentAnim) -1 
+        elif self.actionState =="takedamage":
+            if self.frameIndex < len(self.currentAnim) -1:
+
+                self.frameIndex += self.animationSpeed
+
+        else:
+            self.frameIndex += self.animationSpeed
+            if self.frameIndex >= len(self.currentAnim):
+                self.frameIndex = 0
+            # self.image = self.currentAnim[int(self.frameIndex)]
         self.image = self.currentAnim[int(self.frameIndex)]
+        self.drawRect = self.image.get_rect(midbottom=self.rect.midbottom)
+        # self.drawRect.x += self.spriteOffsetX
+        self.drawRect.y += self.spriteOffsetY
                 
 
 
@@ -291,7 +447,7 @@ class BasicEnemy(pygame.sprite.Sprite):
         self.velX = velocityX
 
         self.boundaryL = boundaryL 
-        self.boundaryR = boundaryR
+        self.boundaryR = boundaryR # simple enemy design, enemy walks in a direction then walks in the other direction once it reaches it's boundary
 
     def update(self):
         self.rect.x += self.velX

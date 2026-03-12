@@ -102,6 +102,8 @@ def playGame(bgscroll):
 
     while True:
         
+        
+
         playerMousePosition = pygame.mouse.get_pos()
        
 
@@ -219,6 +221,11 @@ def playGame(bgscroll):
             bgscroll += 5
         elif player.movingLeft:
             bgscroll -= 5  
+
+        if player.velX > 0:
+            bgscroll += 5
+        elif player.velX < 0:
+            bgscroll -= 5
             # use this for implemntation, issue was bg picture constantly moving to left, but i wanted it to only move relative to player movement
             # therefore added conditionals
         # if abs(bgscroll) > bgwidth:
@@ -236,6 +243,9 @@ def playGame(bgscroll):
                 screen.blit(bglevel1, (-(bgscroll) + bgwidth, 0))
                 screen.blit(bglevel1, (-(bgscroll), 0))
                 
+        for eachEnemy in level1.level1enemies:
+            if player.rect.colliderect(eachEnemy.rect):
+                player.takingDamage(34)
     # second issue is ^ that if moving to left from spawn, picture would stop refreshing
         #reason is because this line since i did absolute value is above bgwidth, and using > i will be only accounting for it when player moves to right
         # i needed to make the wrap logic for going left as well.
@@ -243,8 +253,23 @@ def playGame(bgscroll):
 
         # level1PlatformList.draw(screen)
         # screen.blit(player.playerImage, (player.rect.x - cameraXoffset, player.rect.y - cameraYoffset))
-        screen.blit(player.image, (player.rect.x - cameraXoffset, player.rect.y - cameraYoffset))
+        screen.blit(player.image, (player.drawRect.x - cameraXoffset, player.drawRect.y - cameraYoffset))
+
+        # pygame.draw.rect(screen,(255,0,0),
+        # (player.rect.x-cameraXoffset,
+        # player.rect.y-cameraYoffset,
+        # player.rect.width,
+        # player.rect.height),2)
+
+        # pygame.draw.rect(screen,(0,255,0),
+        # (player.drawRect.x-cameraXoffset,
+        # player.drawRect.y-cameraYoffset,
+        # player.drawRect.width, 
+        # player.drawRect.height),2)
         
+
+        # for debugging player's hitbox
+
         if player.level == 1:
         
             player.update(level1PlatformList)
@@ -259,7 +284,10 @@ def playGame(bgscroll):
                     pygame.draw.rect(screen, (0, 255, 0), (eachEnemy.rect.x - cameraXoffset, eachEnemy.rect.y - cameraYoffset, eachEnemy.rect.width, eachEnemy.rect.height), 5) # just for debugging
                     if attackHitbox.colliderect(eachEnemy.rect):
                         eachEnemy.kill()
-                        break   
+                        break 
+
+                    # if player.rect.colliderect(eachEnemy.rect):
+                    #     player.takingDamage(34)
             level1.drawLevel(screen, cameraXoffset, cameraYoffset)
             timerDisplayed = timerFont.render(str(round(level1.level1timelimit, 2)), True, "#F4DBDB14")
 

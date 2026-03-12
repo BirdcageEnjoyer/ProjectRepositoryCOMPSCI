@@ -36,7 +36,7 @@ level1enemies.add(enemy1)
 
 
 level1platforms = pygame.sprite.Group()
-level1movingplatforms = pygame.sprite.Group()
+
 
 level1platforms.add(platform1)
 level1platforms.add(platform2)
@@ -52,8 +52,6 @@ level1groundplatforms = pygame.sprite.Group()
 
 
 def drawLevel(givenScreen, offsetX, offsetY): #rectangles 3rd parameter follow x, y, xlength, ylength, also draw from the position given, towards the right, and down
-
-  
 
     movingPlatform1.move()
     for enemy in level1enemies:
