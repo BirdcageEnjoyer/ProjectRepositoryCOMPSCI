@@ -45,7 +45,7 @@ class Character(pygame.sprite.Sprite):
         self.previousDirectionL = False
 
         self.gameState = "menu"
-        self.attackCooldownTimer = 300 # this will be decremented everytime attack is pressed, as long as the player misses, once it hits 0 it gets reset
+        self.attackCooldownTimer = 800 # this will be decremented everytime attack is pressed, as long as the player misses, once it hits 0 it gets reset
         #then player can attack again, or if they land the attack they can keep attacking
         self.timeInAttackState = 0
 
@@ -80,7 +80,7 @@ class Character(pygame.sprite.Sprite):
         self.currentAnim = self.animations["idleR"]
 
         self.image = self.currentAnim[0]
-        # self.rect = self.image.get_rect(topleft=(700,500)) #un coment
+        # self.rect = self.image.get_rect(topleft=(700,500)) 
         self.rect = pygame.Rect(700,500, 23, 25)
         self.drawRect = self.image.get_rect(midbottom=self.rect.midbottom)
         self.drawRect.x += self.spriteOffsetX
@@ -438,22 +438,64 @@ class Character(pygame.sprite.Sprite):
 class BasicEnemy(pygame.sprite.Sprite):
     def __init__(self, xPos, yPos, boundaryL, boundaryR, colour, velocityX):
         super().__init__()
-        self.image = pygame.Surface((40, 40))
-        self.colour = colour
-        self.image.fill(self.colour)
+        # self.image = pygame.Surface((40, 40))
+        # self.colour = colour
+        # self.image.fill(self.colour)
+      
+        self.enemySpriteSheet = pygame.image.load("tekimove.png").convert_alpha()
+        self.velX = velocityX
+        self.animations = {
+            "moveR": getFrames(self.enemySpriteSheet, 64, 64, 6, 2),
+            "moveL": getFrames(self.enemySpriteSheet, 64, 64, 6, 1)
+        }
+
+        self.currentAnim = self.animations["moveR"] #moveR
+        self.frameIndex = 0
+        self.animationSpeed = 0.1 #0.15
+        self.image = self.currentAnim[0] 
         self.xPos = xPos #used for the top left corners of the enemy's rectangle, 
         self.yPos = yPos
-        self.rect = self.image.get_rect(topleft=(self.xPos, self.yPos))
-        self.velX = velocityX
+
+        self.rect = pygame.Rect(self.xPos,self.yPos, 23, 25)
+
+
+        self.drawRect = self.image.get_rect(midbottom=(self.rect.midbottom))
+        self.spriteOffsetX = -5
+        self.spriteOffsetY = 20
+        
+        self.drawRect.x = self.spriteOffsetX + self.drawRect.x
+        self.drawRect.y = self.spriteOffsetY + self.drawRect.y
+
 
         self.boundaryL = boundaryL 
         self.boundaryR = boundaryR # simple enemy design, enemy walks in a direction then walks in the other direction once it reaches it's boundary
+
+
+    def updateAnimation(self):
+        if self.velX > 0:
+            chosenAnim = "moveR"
+        else:
+            chosenAnim = "moveL"
+
+        if self.currentAnim != self.animations[chosenAnim]:
+            self.currentAnim = self.animations[chosenAnim]
+            self.frameIndex = 0
+
+    def animationController(self):
+        self.frameIndex += self.animationSpeed
+        if self.frameIndex >= len(self.currentAnim):
+            self.frameIndex = 0
+        
+        self.image = self.currentAnim[int(self.frameIndex)]
+        self.drawRect = self.image.get_rect(midbottom = self.rect.midbottom)
+        self.drawRect.x = self.spriteOffsetX + self.drawRect.x
+        self.drawRect.y = self.spriteOffsetY + self.drawRect.y
 
     def update(self):
         self.rect.x += self.velX
         if self.rect.left <= self.boundaryL:
             
-            self.velX = self.velX * -1 #redundant, just for clarity
+            self.velX = self.velX * -1 
             self.rect.left = self.boundaryL
 
         elif self.rect.right >= self.boundaryR:
@@ -461,20 +503,26 @@ class BasicEnemy(pygame.sprite.Sprite):
             self.rect.right = self.boundaryR
             self.velX = -1 * self.velX # reverses direction since if the enemy hits the right boundary, it should stop moving furthter to the right,
             #and start moving left, so make velocity negative so it subtracts from x to go left
-
+        self.updateAnimation()
+        self.animationController()
 
 class PlatformBlock(pygame.sprite.Sprite):
-    def __init__(self, xPos, yPos, length, height, colour):
+    def __init__(self, xPos, yPos):
         super().__init__()
-        self.blockImage = pygame.Surface((length, height))
-        self.blockImage.fill(colour)
+        # self.blockImage = pygame.Surface((length, height))
+        # self.blockImage.fill(colour)
+
+        self.platform = pygame.image.load("platform2.png").convert_alpha()
+        self.blockImage = pygame.transform.scale(self.platform, (715, 127))
+
+
         # self.blockImage = pygame.image.load("platform1tile.png").convert()
         self.rect = self.blockImage.get_rect(topleft=(xPos, yPos))
         self.xPosition = xPos
         self.yPosition = yPos
-        self.length = length
-        self.height = height
-        self.colour = colour
+        self.length = 715
+        self.height = 127
+        
          #gets the topleft corner of the block
 
 

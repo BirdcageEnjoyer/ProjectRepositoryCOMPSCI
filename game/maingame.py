@@ -281,7 +281,7 @@ def playGame(bgscroll):
                 pygame.draw.rect(screen, (255, 255, 0), (attackHitbox.x - cameraXoffset, attackHitbox.y - cameraYoffset, attackHitbox.width, attackHitbox.height), 2) #just for debugging
                 for eachEnemy in level1.level1enemies:
                     # eachEnemy.update()
-                    pygame.draw.rect(screen, (0, 255, 0), (eachEnemy.rect.x - cameraXoffset, eachEnemy.rect.y - cameraYoffset, eachEnemy.rect.width, eachEnemy.rect.height), 5) # just for debugging
+                    pygame.draw.rect(screen, (0, 255, 0), (eachEnemy.drawRect.x - cameraXoffset, eachEnemy.drawRect.y - cameraYoffset, eachEnemy.drawRect.width, eachEnemy.drawRect.height), 5) # just for debugging
                     if attackHitbox.colliderect(eachEnemy.rect):
                         eachEnemy.kill()
                         break 

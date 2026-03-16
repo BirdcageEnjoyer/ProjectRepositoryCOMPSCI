@@ -19,17 +19,17 @@ level1timelimit = 500
 
 
 
-platform1 = classes.PlatformBlock(0, 600, 500, 300, colours.GREEN)
-platform2 = classes.PlatformBlock(600, 600, 500, 300, colours.GREEN)
-platform3 = classes.PlatformBlock(500, 800, 100, 50, colours.BLACK)
-platform4 = classes.PlatformBlock(1120, 400, 50, 150, colours.YELLOW)
-platform5 = classes.PlatformBlock(1400, 600, 500, 300, colours.GREEN)
-platform6 = classes.PlatformBlock(2100, 400, 500, 300, colours.GREEN)
+platform1 = classes.PlatformBlock(0, 600)
+platform2 = classes.PlatformBlock(600, 600) 
+
+platform4 = classes.PlatformBlock(1120, 400) 
+platform5 = classes.PlatformBlock(1400, 600) 
+platform6 = classes.PlatformBlock(2100, 400)
 movingPlatform1 = classes.MovingPlatformBlock(1100, 400, 1100, 100, 1400, 100, 200, 200, colours.PURPLE, 3, 2)
-platform7 = classes.PlatformBlock(-4000, 600, 4600, 300, colours.GREEN)
+platform7 = classes.PlatformBlock(-4000, 600)
+platformCollision = classes.PlatformBlock(200, 300)
 
-
-enemy1 = classes.BasicEnemy(700, 550, 400, 1000, colours.RED, 3)
+enemy1 = classes.BasicEnemy(700, 575, 400, 1000, colours.RED, 3)
 
 level1enemies = pygame.sprite.Group()
 level1enemies.add(enemy1)
@@ -40,12 +40,13 @@ level1platforms = pygame.sprite.Group()
 
 level1platforms.add(platform1)
 level1platforms.add(platform2)
-level1platforms.add(platform3)
+
 level1platforms.add(platform4)
 level1platforms.add(platform5)
 level1platforms.add(platform6)
 level1platforms.add(platform7)
 level1platforms.add(movingPlatform1)
+level1platforms.add(platformCollision)
 
 level1groundplatforms = pygame.sprite.Group()
 
@@ -56,7 +57,8 @@ def drawLevel(givenScreen, offsetX, offsetY): #rectangles 3rd parameter follow x
     movingPlatform1.move()
     for enemy in level1enemies:
         enemy.update()
-        givenScreen.blit(enemy.image, (enemy.rect.x - offsetX, enemy.rect.y - offsetY))
+        
+        givenScreen.blit(enemy.image, (enemy.drawRect.x - offsetX, enemy.drawRect.y - offsetY))
     # givenScreen.blit(platform2.blockImage, (platform2.rect.x - offsetX, platform2.rect.y - offsetY))
     # givenScreen.blit(platform1.blockImage, (platform1.rect.x - offsetX, platform1.rect.y - offsetY))
     # # givenScreen.blit(platform3.blockImage, (platform3.rect.x - offsetX, platform3.rect.y - offsetY))
