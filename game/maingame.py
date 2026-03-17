@@ -420,7 +420,7 @@ def menu():
         startGameButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 300), textinput="Begin", 
         font=pygameGetFont(75), colour="#964B00", collisioncolour="Red")
 
-        settingsButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 400), textinput="Settings",
+        settingsButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 400), textinput="Press A and D to move, Spacebar to jump, M1 to attack",
         font=pygameGetFont(50), colour="#964B00", collisioncolour="Red")
 
         closeButton = classes.generalpurposeButton(image=pygame.image.load("Button rectangle.png"), position=(700, 500), textinput="Close",
