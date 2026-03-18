@@ -146,6 +146,7 @@ def playGame(bgscroll):
                     menu()
                 player.attackActivation()
                 
+                
 
             
 
